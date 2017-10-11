@@ -1,0 +1,19 @@
+{
+  "name": "client-cadu-stoneco",
+  "version": "0.0.1",
+  "description": "A JavaScript library to interface with CADU",
+  "main": "index.js",
+  "repository": "https://github.com/pagarme/cadu-js",
+  "author": "Pagar.me Pagamentos S/A",
+  "license": "MIT",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "bluebird": "^3.5.1",
+    "eslint": "^4.8.0",
+    "jest": "^21.2.1",
+    "mappersmith": "^2.8.0",
+    "ramda": "^0.25.0",
+    "webpack": "^3.6.0"
+  }
+}
