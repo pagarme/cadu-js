@@ -8,8 +8,6 @@ const {
   always,
   equals,
   ifElse,
-  isNil,
-  when,
 } = require('ramda')
 
 const memberRoutes = require('./routes/member')
@@ -23,18 +21,18 @@ const countryRoutes = require('./routes/others/country')
 const economicActivitiesRoutes = require('./routes/others/economic-activities')
 const analysisRoutes = require('./routes/risk/analysis')
 
+const {
+  checkTokenIsDefined,
+  checkEnvironmentIsDefined,
+} = require('./validations/client')
+
 configs.Promise = Promise
 
 const connect = (options = {}) => {
   const { token, env } = options
 
-  if (isNil(token)) {
-    throw new Error('Token is not defined.')
-  }
-
-  if (isNil(env)) {
-    throw new Error('Environment is not defined.')
-  }
+  checkTokenIsDefined(token)
+  checkEnvironmentIsDefined(env)
 
   const headers = {
     'Content-type': 'application/json',
