@@ -4,16 +4,25 @@
   "description": "A JavaScript library to interface with CADU",
   "main": "index.js",
   "repository": "https://github.com/pagarme/cadu-js",
-  "author": "Pagar.me Pagamentos S/A",
+  "author": "Pagar.me Pagamentos S/A <http://github.com/pagarme>",
   "license": "MIT",
+  "scripts": {
+    "lint": "./node_modules/eslint/bin/eslint.js .",
+    "test": "./node_modules/jest/bin/jest.js"
+  },
   "dependencies": {
+    "bluebird": "^3.5.1",
+    "mappersmith": "^2.8.0",
+    "ramda": "^0.25.0"
+  },
+  "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "bluebird": "^3.5.1",
+    "babel-preset-es2015": "^6.24.1",
     "eslint": "^4.8.0",
+    "eslint-config-pagarme-base": "^2.0.0",
+    "eslint-plugin-import": "^2.7.0",
     "jest": "^21.2.1",
-    "mappersmith": "^2.8.0",
-    "ramda": "^0.25.0",
-    "webpack": "^3.6.0"
+    "webpack": "^3.7.1"
   }
 }
