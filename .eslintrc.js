@@ -1,8 +1,11 @@
 module.exports = {
   extends: ['pagarme-base'],
   env: {
-    jest: true,
+    browser: true,
+    node: true,
+    jest: true
   },
-  globals: {
+  rules: {
+    'import/no-extraneous-dependencies': [2, { devDependencies: true }],
   },
 }

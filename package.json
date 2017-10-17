@@ -1,28 +1,38 @@
 {
-  "name": "client-cadu-stoneco",
-  "version": "0.0.1",
+  "name": "cadu-test-js",
+  "version": "0.0.2",
   "description": "A JavaScript library to interface with CADU",
-  "main": "index.js",
+  "main": "src/client.js",
+  "unpkg": "dist/cadu.min.js",
+  "jsdelivr": "dist/cadu.min.js",
   "repository": "https://github.com/pagarme/cadu-js",
   "author": "Pagar.me Pagamentos S/A <http://github.com/pagarme>",
   "license": "MIT",
   "scripts": {
+    "build:commonjs": "webpack --optimize-minimize --optimize-dedupe --output-filename cadu.min.js",
+    "build:browser": "webpack --optimize-minimize --optimize-dedupe --config webpack.config.browser.js --output-filename cadu.min.js",
+    "build:dev:node": "webpack",
+    "build:dev:browser": "webpack --config webpack.config.browser.js",
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "test": "./node_modules/jest/bin/jest.js"
   },
-  "dependencies": {
-    "bluebird": "^3.5.1",
-    "mappersmith": "^2.8.0",
-    "ramda": "^0.25.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "eslint": "^4.8.0",
-    "eslint-config-pagarme-base": "^2.0.0",
-    "eslint-plugin-import": "^2.7.0",
-    "jest": "^21.2.1",
-    "webpack": "^3.7.1"
+    "babel-cli": "6.18.0",
+    "babel-core": "6.17.0",
+    "babel-jest": "18.0.0",
+    "babel-loader": "6.2.5",
+    "babel-plugin-add-module-exports": "0.2.1",
+    "babel-plugin-ramda": "1.4.3",
+    "babel-preset-es2015": "6.16.0",
+    "bluebird": "3.5.1",
+    "eslint": "4.8.0",
+    "eslint-config-pagarme-base": "2.0.0",
+    "eslint-loader": "1.9.0",
+    "eslint-plugin-import": "2.7.0",
+    "jest": "21.2.1",
+    "mappersmith": "2.9.0",
+    "ramda": "0.25.0",
+    "webpack": "1.13.2"
   }
 }
