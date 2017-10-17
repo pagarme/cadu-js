@@ -25,6 +25,7 @@ const {
 } = require('./validations/client')
 
 const adapters = require('./adapters')
+const adapterRecipient = require('./adapters/pagarme/recipient')
 
 configs.Promise = Promise
 
@@ -58,6 +59,7 @@ const connect = (options = {}) => {
   })
 
   library.adapters = adapters
+  library.adapterRecipient = adapterRecipient
 
   return library
 }
