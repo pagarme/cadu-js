@@ -1,6 +1,7 @@
 const {applySpec, prop, path, always} = require('ramda')
 const moment = require('moment')
 const bankAccountAdapter = require('./bank-account')
+const addressAdapter = require('./address')
 
 module.exports.adaptRecipientToMember = (recipient) => {
     const adaptToMember =  applySpec({
@@ -17,8 +18,18 @@ module.exports.adaptRecipientToMember = (recipient) => {
 
     let member = adaptToMember(recipient)
 
+    // for (let att in member) {
+    //     if (att instanceof Array && att.length === 0) {
+    //         delete att
+    //     }
+    // }
+
     if (member.bankAccounts.length === 0) {
         delete member.bankAccounts
+    }
+
+    if (member.addresses.length === 0) {
+        delete member.addresses
     }
     
     return member
@@ -70,39 +81,27 @@ function getBankAccounts (recipient) {
     return accounts
 }
 
-const isContaCorrente = (recipient) => {
-    return recipient.bankAccount.type === 'conta_corrente'
-}
-
-const getAccountTypeId = (recipient) => {
-    if (isContaCorrente) {
-        return 1
-    }
-
-    return 2
-}
-
 function getAdresses (recipient) {
     const addresses = []
 
-    if (isIndividualRecipient(recipient)) {
-        addresses.push(adaptAddress(recipient.register_information.address))
-    } else {
-        addresses.push(adaptAddress(recipient.register_information.main_address))
+    if (hasAddress(recipient) && isIndividualRecipient(recipient)) {
+        addresses.push(addressAdapter.adapt(recipient.register_information.address))
+    } else if (hasAddress(recipient)) {
+        addresses.push(addressAdapter.adapt(recipient.register_information.main_address))
         recipient.register_information.addresses.forEach((address) => {
-    
-            let hasAddress = addresses.some((addr) => {
+        
+            let alreadyHasAddress = addresses.some((addr) => {
                 return addr.streetName === address.street &&
                     addr.entranceNumber === address.street_number &&
                     addr.neighborhood === address.neighborhood &&
                     addr.postalCode === address.zipcode &&
                     addr.complement === address.complementary &&
                     addr.cityName === address.city &&
-                    addr.countrySubdivisionCode === getState(address)
+                    addr.countrySubdivisionCode === addressAdapter.getState(address)
             })
-    
-            if (!hasAddress) {
-                addresses.push(adaptAddress(address))
+        
+            if (!alreadyHasAddress) {
+                addresses.push(addressAdapter.adapt(address))
             }
         })
     }
@@ -110,22 +109,6 @@ function getAdresses (recipient) {
     return addresses
 }
 
-const adaptAddress = (recipientAddress) => {
-    const address = applySpec({
-        typeId: always(2),
-        streetName: prop('street'),
-        entranceNumber: prop('street_number'),
-        neighborhood: prop('neighborhood'),
-        postalCode: prop('zipcode'),
-        complement: prop('complementary'),
-        cityName: prop('city'),
-        countrySubdivisionCode: getState,
-        countryId: always(76)
-    })
-
-    return address(recipientAddress)
-}
-
-const getState = (recipientAddress) => {
-    return `BR-${recipientAddress.state}`
+const hasAddress = (recipient) => {
+    return recipient.register_information.address || recipient.register_information.main_address || recipient.register_information.addresses
 }
