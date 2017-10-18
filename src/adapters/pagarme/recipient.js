@@ -1,17 +1,28 @@
 const {applySpec, prop, path, always} = require('ramda')
 const moment = require('moment')
+const bankAccountAdapter = require('./bank-account')
 
-module.exports.adaptRecipientToMember = applySpec({
-  legalName: getLegalName,
-  tradeName: getTradeName,
-  legalPersonalityId: getPersonCode,
-  taxId: path(['register_information', 'document_number']),
-  taxIdTypeId: getPersonCode,
-  birthdate: getBirthDate,
-  motherName: path(['register_information', 'mother_name']),
-  bankAccounts: getBankAccounts,
-  addresses: getAdresses
-})
+module.exports.adaptRecipientToMember = (recipient) => {
+    const adaptToMember =  applySpec({
+        legalName: getLegalName,
+        tradeName: getTradeName,
+        legalPersonalityId: getPersonCode,
+        taxId: path(['register_information', 'document_number']),
+        taxIdTypeId: getPersonCode,
+        birthdate: getBirthDate,
+        motherName: path(['register_information', 'mother_name']),
+        bankAccounts: getBankAccounts,
+        addresses: getAdresses
+      })
+
+    let member = adaptToMember(recipient)
+
+    if (member.bankAccounts.length === 0) {
+        delete member.bankAccounts
+    }
+    
+    return member
+}
 
 function isIndividualRecipient(recipient) {
     return recipient.register_information && recipient.register_information.type === 'individual'
@@ -50,19 +61,13 @@ function getBirthDate (recipient) {
 }
 
 function getBankAccounts (recipient) {
+    let accounts = []
 
-    const bankAccount = applySpec({
-        countryId: always(76),
-        bankId: path(['bankAccount', 'bank_code']),
-        branchCode:path(['bankAccount', 'agencia']),
-        branchCodeCheckDigit: path(['bankAccount', 'agencia_dv']),
-        accountNumber: path(['bankAccount', 'conta']),
-        accountNumberCheckDigit: path(['bankAccount', 'conta_dv']),
-        statusId: always(2),
-        accountTypeId: getAccountTypeId
-    })
+    if (recipient.bankAccount) {
+        accounts.push(bankAccountAdapter.adapt(recipient.bankAccount))
+    }
 
-    return [bankAccount(recipient)]
+    return accounts
 }
 
 const isContaCorrente = (recipient) => {
