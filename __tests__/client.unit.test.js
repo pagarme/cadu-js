@@ -1,4 +1,4 @@
-const cadujs = require('./client')
+const cadujs = require('../src/client')
 
 describe('Create client', () => {
   test('without token', () => {
