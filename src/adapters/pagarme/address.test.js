@@ -20,6 +20,6 @@ test('the adapter must return a fulfilled adress object', () => {
     expect(address).toHaveProperty('neighborhood', 'bairro')
     expect(address).toHaveProperty('complement', 'complemento')
     expect(address).toHaveProperty('cityName', 'Belém')
-    expect(address).toHaveProperty('countrySubdivisionCode', 'BR-PA')
+    expect(address).toHaveProperty('countrySubdivisionCode', 'PA')
     expect(address).toHaveProperty('countryId', 76)
 })

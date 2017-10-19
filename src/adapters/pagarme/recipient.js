@@ -1,90 +1,94 @@
-const {applySpec, prop, path, always} = require('ramda')
 const moment = require('moment')
 const bankAccountAdapter = require('./bank-account')
 const addressAdapter = require('./address')
+const {
+    applySpec,
+    prop,
+    path,
+    always,
+    not,
+    isNil,
+    isEmpty,
+    compose,
+    filter,
+    pipe,
+    has,
+    ifElse,
+    pathEq,
+    __,
+    both,
+    of,
+    or,
+} = require('ramda')
 
-module.exports.adaptRecipientToMember = (recipient) => {
+
+const legalName = ifElse(has('register_information'),
+                        ifElse(pathEq(['register_information', 'type'], 'individual'),
+                                path(['register_information', 'name']),
+                                path(['register_information', 'company_name'])),
+                        path(['bankAccount', 'legal_name']))
+
+const tradeName = ifElse(has('register_information'),
+                        ifElse(pathEq(['register_information', 'type'], 'individual'),
+                                path(['register_information', 'name']),
+                                path(['register_information', 'trading_name'])),
+                        always(null))
+
+const ternary = ifElse(__, always(2), always(1))
+
+const isIndividual = both(has('register_information'),
+                          pathEq(['register_information', 'type'], 'individual'))
+
+const personCode = ifElse(has('register_information'),
+                        ternary(isIndividual),
+                        ternary(pathEq(['bankAccount', 'document_type'], 'cpf')))
+
+const taxId = ifElse(has('register_information'),
+                    path(['register_information', 'document_number']),
+                    path(['bankAccount', 'document_number']))
+
+const formatedBirthDate = (recipient) =>
+    moment(recipient.register_information.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD')
+
+const birthdate = ifElse(both(has('register_information'), path(['register_information', 'birthdate'])),
+                    formatedBirthDate,
+                    always(null))
+
+const bankAccounts = ifElse(has('bankAccount'),
+    pipe(prop('bankAccount'), bankAccountAdapter.adapt, of),
+    always(null))
+
+const notNil = compose(not, isNil)
+const notEmpty = compose(not, isEmpty)
+const filterNotNil = filter(notNil)
+const filterNotEmpty = filter(notEmpty)
+ 
+const adaptRecipientToMember = (recipient) => {
     const adaptToMember =  applySpec({
-        legalName: getLegalName,
-        tradeName: getTradeName,
-        legalPersonalityId: getPersonCode,
-        taxId: path(['register_information', 'document_number']),
-        taxIdTypeId: getPersonCode,
-        birthdate: getBirthDate,
+        legalName,
+        tradeName,
+        taxId,
+        legalPersonalityId: personCode,
+        taxIdTypeId: personCode,
+        birthdate,
         motherName: path(['register_information', 'mother_name']),
-        bankAccounts: getBankAccounts,
+        bankAccounts,
         addresses: getAdresses
       })
 
-    let member = adaptToMember(recipient)
+    const adapt = pipe(adaptToMember, filterNotEmpty, filterNotNil)
 
-    // for (let att in member) {
-    //     if (att instanceof Array && att.length === 0) {
-    //         delete att
-    //     }
-    // }
-
-    if (member.bankAccounts.length === 0) {
-        delete member.bankAccounts
-    }
-
-    if (member.addresses.length === 0) {
-        delete member.addresses
-    }
-    
-    return member
+    return adapt(recipient)
 }
 
-function isIndividualRecipient(recipient) {
-    return recipient.register_information && recipient.register_information.type === 'individual'
-}
-
-function getLegalName(recipient) {
-    if (isIndividualRecipient(recipient)) {
-        return recipient.register_information.name
-    }
-
-    return recipient.register_information.company_name
-}
-
-function getTradeName(recipient) {
-    if (isIndividualRecipient(recipient)) {
-        return recipient.register_information.name
-    }
-
-    return recipient.register_information.trading_name
-}
-
-function getPersonCode (recipient) {
-    if (isIndividualRecipient(recipient)) {
-        return 2
-    }
-
-    return 1
-}
-
-function getBirthDate (recipient) {
-    if (recipient.register_information.birthdate) {
-        return moment(recipient.register_information.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD')
-    }
-
-    return null
-}
-
-function getBankAccounts (recipient) {
-    let accounts = []
-
-    if (recipient.bankAccount) {
-        accounts.push(bankAccountAdapter.adapt(recipient.bankAccount))
-    }
-
-    return accounts
+function hasRegisterInformation(recipient) {
+    return !isNil(recipient.register_information)
 }
 
 function getAdresses (recipient) {
     const addresses = []
 
-    if (hasAddress(recipient) && isIndividualRecipient(recipient)) {
+    if (hasAddress(recipient) && isIndividual(recipient)) {
         addresses.push(addressAdapter.adapt(recipient.register_information.address))
     } else if (hasAddress(recipient)) {
         addresses.push(addressAdapter.adapt(recipient.register_information.main_address))
@@ -97,7 +101,7 @@ function getAdresses (recipient) {
                     addr.postalCode === address.zipcode &&
                     addr.complement === address.complementary &&
                     addr.cityName === address.city &&
-                    addr.countrySubdivisionCode === addressAdapter.getState(address)
+                    addr.countrySubdivisionCode === address.state
             })
         
             if (!alreadyHasAddress) {
@@ -110,5 +114,12 @@ function getAdresses (recipient) {
 }
 
 const hasAddress = (recipient) => {
-    return recipient.register_information.address || recipient.register_information.main_address || recipient.register_information.addresses
+    return hasRegisterInformation(recipient) &&
+        (recipient.register_information.address ||
+        recipient.register_information.main_address ||
+        recipient.register_information.addresses)
+}
+
+module.exports = {
+    adaptRecipientToMember
 }

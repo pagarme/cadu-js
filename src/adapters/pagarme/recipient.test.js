@@ -291,6 +291,43 @@ const individualRecipientWithoutAddress = {
   }
 }
 
+const recipientWithoutRegisterInformation = {
+  id: 're_cj8unlow8000r01peowiwiv76',
+  anticipation_fee: null,
+  automatic_anticipation_type: 'full',
+  automatic_anticipation_1025_delay: 15,
+  allow_inter_recipient_transfer: true,
+  cadu_id: null,
+  company_id: '59e51b7c2c8a22010014f9c8',
+  bank_account_id: 2181,
+  transfer_enabled: false,
+  postback_url: '',
+  transfer_interval: 'daily',
+  transfer_day: 0,
+  automatic_anticipation_enabled: false,
+  anticipatable_volume_percentage: 0,
+  status: 'registration',
+  last_transfer: null,
+  automatic_anticipation_days: null,
+  mdrs: null,
+  status_reason: null,
+  metadata: null,
+  bankAccount: {
+    id: 2202,
+    company_id: '59e607f06205130100994282',
+    bank_code: '341',
+    agencia: '3830',
+    agencia_dv: null,
+    conta: '15025',
+    conta_dv: '0',
+    document_type: 'cpf',
+    type: 'conta_corrente',
+    document_number: '12388151708',
+    legal_name: 'PEDRO H C FRANCESCHI',
+    charge_transfer_fees: true
+  }
+}
+
 test('the adapter must return a fulfilled member object for a company recipient', () => {
     const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
 
@@ -299,7 +336,7 @@ test('the adapter must return a fulfilled member object for a company recipient'
     expect(member).toHaveProperty('legalPersonalityId', 1)
     expect(member).toHaveProperty('taxId', '43633675456')
     expect(member).toHaveProperty('taxIdTypeId', 1)
-    expect(member).toHaveProperty('birthdate', null)
+    expect(member).not.toHaveProperty('birthdate')
     expect(member).toHaveProperty('motherName', undefined)
     expect(member).toHaveProperty('bankAccounts')
     expect(member).toHaveProperty('addresses')
@@ -334,7 +371,7 @@ test('the adapter must return a fulfilled adresses array object for a company re
   expect(address1).toHaveProperty('neighborhood', 'bairro')
   expect(address1).toHaveProperty('complement', 'complemento')
   expect(address1).toHaveProperty('cityName', 'Belém')
-  expect(address1).toHaveProperty('countrySubdivisionCode', 'BR-PA')
+  expect(address1).toHaveProperty('countrySubdivisionCode', 'PA')
   expect(address1).toHaveProperty('countryId', 76)
 
   expect(address3).toHaveProperty('typeId', 2)
@@ -343,7 +380,7 @@ test('the adapter must return a fulfilled adresses array object for a company re
   expect(address3).toHaveProperty('neighborhood', 'foo bairro')
   expect(address3).toHaveProperty('complement', 'foo complemento')
   expect(address3).toHaveProperty('cityName', 'foo cidade')
-  expect(address3).toHaveProperty('countrySubdivisionCode', 'BR-SP')
+  expect(address3).toHaveProperty('countrySubdivisionCode', 'SP')
   expect(address3).toHaveProperty('countryId', 76)
 })
 
@@ -393,7 +430,7 @@ test('the adapter must return a fulfilled adresses array object for a individual
   expect(address).toHaveProperty('neighborhood', 'Miramar')
   expect(address).toHaveProperty('complement', 'Apt 202')
   expect(address).toHaveProperty('cityName', 'Macaé')
-  expect(address).toHaveProperty('countrySubdivisionCode', 'BR-RJ')
+  expect(address).toHaveProperty('countrySubdivisionCode', 'RJ')
   expect(address).toHaveProperty('countryId', 76)
 })
 
@@ -423,4 +460,18 @@ test('the adapter must return a fulfilled member object with no address', () => 
   expect(member).toHaveProperty('birthdate', '1980-10-30')
   expect(member).toHaveProperty('motherName', "John Doe's Mom")
   expect(member).toHaveProperty('bankAccounts')
-}) 
+})
+
+test('the adapter must return a fulfilled member object for a recipient with no register information', () => {
+  const member = recipientAdapter.adaptRecipientToMember(recipientWithoutRegisterInformation)
+
+  expect(member).toHaveProperty('legalName', 'PEDRO H C FRANCESCHI')
+  expect(member).not.toHaveProperty('tradeName')
+  expect(member).toHaveProperty('legalPersonalityId', 2)
+  expect(member).toHaveProperty('taxId', '12388151708')
+  expect(member).toHaveProperty('taxIdTypeId', 2)
+  expect(member).not.toHaveProperty('birthdate')
+  expect(member).not.toHaveProperty('motherName')
+  expect(member).toHaveProperty('bankAccounts')
+  expect(member).not.toHaveProperty('addresses')
+})
