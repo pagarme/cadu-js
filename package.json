@@ -1,6 +1,6 @@
 {
   "name": "cadu-test-js",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "A JavaScript library to interface with CADU",
   "main": "src/client.js",
   "unpkg": "dist/cadu.min.js",
@@ -13,8 +13,11 @@
     "build:browser": "webpack --optimize-minimize --optimize-dedupe --config webpack.config.browser.js --output-filename cadu.min.js",
     "build:dev:node": "webpack",
     "build:dev:browser": "webpack --config webpack.config.browser.js",
-    "lint": "./node_modules/eslint/bin/eslint.js .",
-    "test": "./node_modules/jest/bin/jest.js"
+    "lint": "./node_modules/eslint/bin/eslint.js src/ test/",
+    "test:all": "./node_modules/jest/bin/jest.js",
+    "test:unit": "./node_modules/jest/bin/jest.js unit",
+    "test:int": "./node_modules/jest/bin/jest.js int",
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "bluebird": "3.5.1",
@@ -33,6 +36,7 @@
     "eslint-config-pagarme-base": "2.0.0",
     "eslint-loader": "1.9.0",
     "eslint-plugin-import": "2.7.0",
+    "husky": "^0.14.3",
     "jest": "21.2.1",
     "webpack": "1.13.2"
   }

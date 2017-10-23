@@ -1,8 +1,6 @@
 const Promise = require('bluebird')
-const {
-  default: mappersmith,
-  configs,
-} = require('mappersmith')
+const { default: mappersmith, configs } = require('mappersmith')
+const { default: encodeJson } = require('mappersmith/middlewares/encode-json')
 
 const {
   always,
@@ -26,6 +24,8 @@ const {
   checkEnvironmentIsDefined,
 } = require('./validations/client')
 
+const adapters = require('./adapters')
+
 configs.Promise = Promise
 
 const connect = (options = {}) => {
@@ -34,13 +34,6 @@ const connect = (options = {}) => {
   checkTokenIsDefined(token)
   checkEnvironmentIsDefined(env)
 
-  const headers = {
-    'Content-type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  }
-
-  const connectRoute = route => route(headers)
-
   const chooseHost = ifElse(
     equals('live'),
     always('https://api-cadu.stone.com.br'),
@@ -48,20 +41,23 @@ const connect = (options = {}) => {
   )
 
   const library = mappersmith({
+    middlewares: [encodeJson],
     host: chooseHost(env),
     resources: {
-      Member: connectRoute(memberRoutes),
-      Contact: connectRoute(contactRoutes),
-      BankAccount: connectRoute(bankAccountRoutes),
-      Email: connectRoute(emailRoutes),
-      Address: connectRoute(addressRoutes),
-      Partner: connectRoute(partnerRoutes),
-      Phone: connectRoute(phoneRoutes),
-      Country: connectRoute(countryRoutes),
-      EconomicActivity: connectRoute(economicActivitiesRoutes),
-      Analysis: connectRoute(analysisRoutes),
+      Member: memberRoutes,
+      Contact: contactRoutes,
+      BankAccount: bankAccountRoutes,
+      Email: emailRoutes,
+      Address: addressRoutes,
+      Partner: partnerRoutes,
+      Phone: phoneRoutes,
+      Country: countryRoutes,
+      EconomicActivity: economicActivitiesRoutes,
+      Analysis: analysisRoutes,
     },
   })
+
+  library.adapters = adapters
 
   return library
 }

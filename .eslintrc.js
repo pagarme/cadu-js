@@ -5,7 +5,4 @@ module.exports = {
     node: true,
     jest: true
   },
-  rules: {
-    'import/no-extraneous-dependencies': [2, { devDependencies: true }],
-  },
 }

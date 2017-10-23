@@ -1,39 +1,33 @@
 const countryAPI = '/membership/v1/countries'
 
-module.exports = headers => ({
+module.exports = {
   list: {
     method: 'get',
     path: countryAPI,
-    headers,
   },
 
   byId: {
     method: 'get',
     path: `${countryAPI}/{countryCode}`,
-    headers,
   },
 
   listSubDivisions: {
     method: 'get',
     path: `${countryAPI}/{countryCode}/subdivisions`,
-    headers,
   },
 
   subDivisionById: {
     method: 'get',
     path: `${countryAPI}/{countryCode}/subdivisions/{subDivisionCode}`,
-    headers,
   },
 
   listCities: {
     method: 'get',
     path: `${countryAPI}/{countryCode}/subdivisions/{subDivisionCode}/cities`,
-    headers,
   },
 
   cityById: {
     method: 'get',
     path: `${countryAPI}/{countryCode}/subdivisions/{subDivisionCode}/cities/{cityCode}`,
-    headers,
   },
-})
+}
