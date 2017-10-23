@@ -24,27 +24,27 @@ const companyRecipient = {
       zipcode: '04571020',
       complementary: 'complemento',
       state: 'PA',
-      city: 'Belém'
+      city: 'Belém',
     },
     addresses: [
-    {
-      neighborhood: 'bairro',
-      street: 'rua',
-      street_number: '240',
-      zipcode: '04571020',
-      complementary: 'complemento',
-      state: 'PA',
-      city: 'cidade'
-    },
-    {
-      neighborhood: 'foo bairro',
-      street: 'outra rua',
-      street_number: '241',
-      zipcode: '04571020',
-      complementary: 'foo complemento',
-      state: 'SP',
-      city: 'foo cidade'
-    }]
+      {
+        neighborhood: 'bairro',
+        street: 'rua',
+        street_number: '240',
+        zipcode: '04571020',
+        complementary: 'complemento',
+        state: 'PA',
+        city: 'cidade',
+      },
+      {
+        neighborhood: 'foo bairro',
+        street: 'outra rua',
+        street_number: '241',
+        zipcode: '04571020',
+        complementary: 'foo complemento',
+        state: 'SP',
+        city: 'foo cidade',
+      }],
   },
   company_id: '59e4f6aa190bd601000cfe92',
   bank_account_id: 2059,
@@ -73,7 +73,7 @@ const companyRecipient = {
     document_number: '12388151708',
     legal_name: 'PEDRO H C FRANCESCHI',
     charge_transfer_fees: true,
-  }
+  },
 }
 
 const companyRecipientWithRepeatedAddresses = {
@@ -100,27 +100,27 @@ const companyRecipientWithRepeatedAddresses = {
       zipcode: '04571020',
       complementary: 'complemento',
       state: 'PA',
-      city: 'Belém'
+      city: 'Belém',
     },
     addresses: [
-    {
-      neighborhood: 'bairro',
-      street: 'rua',
-      street_number: '240',
-      zipcode: '04571020',
-      complementary: 'complemento',
-      state: 'PA',
-      city: 'Belém'
-    },
-    {
-      neighborhood: 'foo bairro',
-      street: 'outra rua',
-      street_number: '241',
-      zipcode: '04571020',
-      complementary: 'foo complemento',
-      state: 'SP',
-      city: 'foo cidade'
-    }]
+      {
+        neighborhood: 'bairro',
+        street: 'rua',
+        street_number: '240',
+        zipcode: '04571020',
+        complementary: 'complemento',
+        state: 'PA',
+        city: 'Belém',
+      },
+      {
+        neighborhood: 'foo bairro',
+        street: 'outra rua',
+        street_number: '241',
+        zipcode: '04571020',
+        complementary: 'foo complemento',
+        state: 'SP',
+        city: 'foo cidade',
+      }],
   },
   company_id: '59e4f6aa190bd601000cfe92',
   bank_account_id: 2059,
@@ -149,7 +149,7 @@ const companyRecipientWithRepeatedAddresses = {
     document_number: '12388151708',
     legal_name: 'PEDRO H C FRANCESCHI',
     charge_transfer_fees: true,
-  }
+  },
 }
 
 const individualRecipient = {
@@ -159,22 +159,22 @@ const individualRecipient = {
   automatic_anticipation_1025_delay: 15,
   allow_inter_recipient_transfer: true,
   cadu_id: null,
-  register_information:{
+  register_information: {
     type: 'individual',
-    address:{
+    address: {
       neighborhood: 'Miramar',
       street: 'Rua Doutor Télio Barreto',
       street_number: '240',
       zipcode: '04571020',
       complementary: 'Apt 202',
       state: 'RJ',
-      city: 'Macaé'
+      city: 'Macaé',
     },
     document_number: '92545278157',
     email: 'some@email.com',
     name: 'John Doe',
     mother_name: "John Doe's Mom",
-    birthdate: '30/10/1980'
+    birthdate: '30/10/1980',
   },
   company_id: '59e51b7c2c8a22010014f9c8',
   bank_account_id: 2181,
@@ -202,8 +202,8 @@ const individualRecipient = {
     type: 'conta_corrente',
     document_number: '12388151708',
     legal_name: 'PEDRO H C FRANCESCHI',
-    charge_transfer_fees: true
-  }
+    charge_transfer_fees: true,
+  },
 }
 
 const individualRecipientWithoutBankAccount = {
@@ -213,22 +213,22 @@ const individualRecipientWithoutBankAccount = {
   automatic_anticipation_1025_delay: 15,
   allow_inter_recipient_transfer: true,
   cadu_id: null,
-  register_information:{
+  register_information: {
     type: 'individual',
-    address:{
+    address: {
       neighborhood: 'Miramar',
       street: 'Rua Doutor Télio Barreto',
       street_number: '240',
       zipcode: '04571020',
       complementary: 'Apt 202',
       state: 'RJ',
-      city: 'Macaé'
+      city: 'Macaé',
     },
     document_number: '92545278157',
     email: 'some@email.com',
     name: 'John Doe',
     mother_name: "John Doe's Mom",
-    birthdate: '30/10/1980'
+    birthdate: '30/10/1980',
   },
   company_id: '59e51b7c2c8a22010014f9c8',
   bank_account_id: 2181,
@@ -253,13 +253,13 @@ const individualRecipientWithoutAddress = {
   automatic_anticipation_1025_delay: 15,
   allow_inter_recipient_transfer: true,
   cadu_id: null,
-  register_information:{
+  register_information: {
     type: 'individual',
     document_number: '92545278157',
     email: 'some@email.com',
     name: 'John Doe',
     mother_name: "John Doe's Mom",
-    birthdate: '30/10/1980'
+    birthdate: '30/10/1980',
   },
   company_id: '59e51b7c2c8a22010014f9c8',
   bank_account_id: 2181,
@@ -287,8 +287,8 @@ const individualRecipientWithoutAddress = {
     type: 'conta_corrente',
     document_number: '12388151708',
     legal_name: 'PEDRO H C FRANCESCHI',
-    charge_transfer_fees: true
-  }
+    charge_transfer_fees: true,
+  },
 }
 
 const recipientWithoutRegisterInformation = {
@@ -324,22 +324,22 @@ const recipientWithoutRegisterInformation = {
     type: 'conta_corrente',
     document_number: '12388151708',
     legal_name: 'PEDRO H C FRANCESCHI',
-    charge_transfer_fees: true
-  }
+    charge_transfer_fees: true,
+  },
 }
 
 test('the adapter must return a fulfilled member object for a company recipient', () => {
-    const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
+  const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
 
-    expect(member).toHaveProperty('legalName', 'Full Name Company')
-    expect(member).toHaveProperty('tradeName', 'Known Company Name')
-    expect(member).toHaveProperty('legalPersonalityId', 1)
-    expect(member).toHaveProperty('taxId', '43633675456')
-    expect(member).toHaveProperty('taxIdTypeId', 1)
-    expect(member).not.toHaveProperty('birthdate')
-    expect(member).toHaveProperty('motherName', undefined)
-    expect(member).toHaveProperty('bankAccounts')
-    expect(member).toHaveProperty('addresses')
+  expect(member).toHaveProperty('legalName', 'Full Name Company')
+  expect(member).toHaveProperty('tradeName', 'Known Company Name')
+  expect(member).toHaveProperty('legalPersonalityId', 1)
+  expect(member).toHaveProperty('taxId', '43633675456')
+  expect(member).toHaveProperty('taxIdTypeId', 1)
+  expect(member).not.toHaveProperty('birthdate')
+  expect(member).toHaveProperty('motherName', undefined)
+  expect(member).toHaveProperty('bankAccounts')
+  expect(member).toHaveProperty('addresses')
 })
 
 test('the adapter must return a fulfilled bankAccounts array object for a company recipient', () => {
@@ -360,7 +360,6 @@ test('the adapter must return a fulfilled bankAccounts array object for a compan
 test('the adapter must return a fulfilled adresses array object for a company recipient', () => {
   const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
   const address1 = member.addresses[0]
-  const address2 = member.addresses[1]
   const address3 = member.addresses[2]
 
   expect(member.addresses).toHaveLength(3)
@@ -385,7 +384,8 @@ test('the adapter must return a fulfilled adresses array object for a company re
 })
 
 test('the adapter must return non repeated addresses', () => {
-  const member = recipientAdapter.adaptRecipientToMember(companyRecipientWithRepeatedAddresses)
+  const member = recipientAdapter
+    .adaptRecipientToMember(companyRecipientWithRepeatedAddresses)
   expect(member.addresses).toHaveLength(2)
 })
 
@@ -435,7 +435,8 @@ test('the adapter must return a fulfilled adresses array object for a individual
 })
 
 test('the adapter must return a fulfilled member object with no bank account', () => {
-  const member = recipientAdapter.adaptRecipientToMember(individualRecipientWithoutBankAccount)
+  const member = recipientAdapter
+    .adaptRecipientToMember(individualRecipientWithoutBankAccount)
   expect(member).not.toHaveProperty('bankAccounts')
 
   expect(member).toHaveProperty('legalName', 'John Doe')
@@ -449,7 +450,8 @@ test('the adapter must return a fulfilled member object with no bank account', (
 })
 
 test('the adapter must return a fulfilled member object with no address', () => {
-  const member = recipientAdapter.adaptRecipientToMember(individualRecipientWithoutAddress)
+  const member = recipientAdapter
+    .adaptRecipientToMember(individualRecipientWithoutAddress)
   expect(member).not.toHaveProperty('addresses')
 
   expect(member).toHaveProperty('legalName', 'John Doe')
@@ -463,7 +465,8 @@ test('the adapter must return a fulfilled member object with no address', () => 
 })
 
 test('the adapter must return a fulfilled member object for a recipient with no register information', () => {
-  const member = recipientAdapter.adaptRecipientToMember(recipientWithoutRegisterInformation)
+  const member = recipientAdapter
+    .adaptRecipientToMember(recipientWithoutRegisterInformation)
 
   expect(member).toHaveProperty('legalName', 'PEDRO H C FRANCESCHI')
   expect(member).not.toHaveProperty('tradeName')
