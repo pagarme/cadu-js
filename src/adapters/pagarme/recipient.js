@@ -18,26 +18,30 @@ const {
   __,
   both,
   of,
+  uniq,
 } = require('ramda')
 
+const legalNameCompany = ifElse(
+  pathEq(['register_information', 'type'], 'individual'),
+  path(['register_information', 'name']),
+  path(['register_information', 'company_name'])
+)
+
+const tradeNameCompany = ifElse(
+  pathEq(['register_information', 'type'], 'individual'),
+  path(['register_information', 'name']),
+  path(['register_information', 'trading_name'])
+)
 
 const legalName = ifElse(
   has('register_information'),
-  ifElse(
-    pathEq(['register_information', 'type'], 'individual'),
-    path(['register_information', 'name']),
-    path(['register_information', 'company_name'])
-  ),
+  legalNameCompany,
   path(['bankAccount', 'legal_name'])
 )
 
 const tradeName = ifElse(
   has('register_information'),
-  ifElse(
-    pathEq(['register_information', 'type'], 'individual'),
-    path(['register_information', 'name']),
-    path(['register_information', 'trading_name'])
-  ),
+  tradeNameCompany,
   always(null)
 )
 
@@ -75,39 +79,29 @@ const bankAccounts = ifElse(
   always(null)
 )
 
-function hasRegisterInformation (recipient) {
-  return !isNil(recipient.register_information)
-}
+const hasRegisterInformation = recipient =>
+  !isNil(recipient.register_information)
 
 const hasAddress = recipient => hasRegisterInformation(recipient) &&
   (recipient.register_information.address ||
   recipient.register_information.main_address ||
   recipient.register_information.addresses)
-function getAdresses (recipient) {
-  const addresses = []
 
-  if (hasAddress(recipient) && isIndividual(recipient)) {
-    addresses.push(addressAdapter.adapt(recipient.register_information.address))
-  } else if (hasAddress(recipient)) {
-    addresses.push(addressAdapter
-      .adapt(recipient.register_information.main_address))
-    recipient.register_information.addresses.forEach((address) => {
-      const alreadyHasAddress = addresses
-        .some(addr => addr.streetName === address.street &&
-                      addr.entranceNumber === address.street_number &&
-                      addr.neighborhood === address.neighborhood &&
-                      addr.postalCode === address.zipcode &&
-                      addr.complement === address.complementary &&
-                      addr.cityName === address.city &&
-                      addr.countrySubdivisionCode === address.state)
+const getAdresses = (recipient) => {
+  let addressesArray = []
 
-      if (!alreadyHasAddress) {
-        addresses.push(addressAdapter.adapt(address))
-      }
-    })
+  if (hasAddress(recipient)) {
+    const { addresses, address, main_address } = recipient.register_information
+
+    if (isIndividual(recipient)) {
+      addressesArray.push(addressAdapter.adapt(address))
+    } else {
+      addressesArray = addresses.map(addressAdapter.adapt)
+      addressesArray.push(addressAdapter.adapt(main_address))
+    }
   }
 
-  return addresses
+  return uniq(addressesArray)
 }
 
 const notNil = compose(not, isNil)

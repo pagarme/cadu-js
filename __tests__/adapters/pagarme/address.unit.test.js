@@ -1,4 +1,4 @@
-const addressAdapter = require('./address')
+const addressAdapter = require('../../../src/adapters/pagarme/address')
 
 const addressMock = {
   neighborhood: 'bairro',

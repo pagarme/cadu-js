@@ -1,4 +1,4 @@
-const recipientAdapter = require('./recipient')
+const recipientAdapter = require('../../../src/adapters/pagarme/recipient')
 
 const companyRecipient = {
   id: 're_cj8uhzne9000v01pe9westv13',
@@ -359,8 +359,8 @@ test('the adapter must return a fulfilled bankAccounts array object for a compan
 
 test('the adapter must return a fulfilled adresses array object for a company recipient', () => {
   const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
-  const address1 = member.addresses[0]
-  const address3 = member.addresses[2]
+  const address1 = member.addresses[2]
+  const address3 = member.addresses[1]
 
   expect(member.addresses).toHaveLength(3)
 

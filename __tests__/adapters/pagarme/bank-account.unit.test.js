@@ -1,4 +1,4 @@
-const bankAccountAdapter = require('./bank-account')
+const bankAccountAdapter = require('../../../src/adapters/pagarme/bank-account')
 
 const bankAccount = {
   id: 2080,
