@@ -11,7 +11,7 @@ const addressMock = {
 }
 
 test('the adapter must return a fulfilled adress object', () => {
-  const address = addressAdapter.adapt(addressMock)
+  const address = addressAdapter(addressMock)
 
   expect(address).toHaveProperty('typeId', 2)
   expect(address).toHaveProperty('streetName', 'rua')

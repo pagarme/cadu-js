@@ -1,6 +1,6 @@
 const { applySpec, prop, always } = require('ramda')
 
-module.exports.adapt = applySpec({
+const adapter = applySpec({
   typeId: always(2),
   streetName: prop('street'),
   entranceNumber: prop('street_number'),
@@ -11,3 +11,5 @@ module.exports.adapt = applySpec({
   countrySubdivisionCode: prop('state'),
   countryId: always(76),
 })
+
+module.exports = adapter

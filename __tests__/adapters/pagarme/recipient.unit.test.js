@@ -329,24 +329,25 @@ const recipientWithoutRegisterInformation = {
 }
 
 test('the adapter must return a fulfilled member object for a company recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
+  const member = recipientAdapter(companyRecipient)
 
+  expect(member).not.toHaveProperty('birthdate')
   expect(member).toHaveProperty('legalName', 'Full Name Company')
   expect(member).toHaveProperty('tradeName', 'Known Company Name')
   expect(member).toHaveProperty('legalPersonalityId', 1)
   expect(member).toHaveProperty('taxId', '43633675456')
   expect(member).toHaveProperty('taxIdTypeId', 1)
-  expect(member).not.toHaveProperty('birthdate')
   expect(member).toHaveProperty('motherName', undefined)
   expect(member).toHaveProperty('bankAccounts')
   expect(member).toHaveProperty('addresses')
 })
 
 test('the adapter must return a fulfilled bankAccounts array object for a company recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
+  const member = recipientAdapter(companyRecipient)
   const bankAccount = member.bankAccounts[0]
 
   expect(member.bankAccounts).toHaveLength(1)
+
   expect(bankAccount).toHaveProperty('countryId', 76)
   expect(bankAccount).toHaveProperty('bankId', '341')
   expect(bankAccount).toHaveProperty('branchCode', '3830')
@@ -358,7 +359,7 @@ test('the adapter must return a fulfilled bankAccounts array object for a compan
 })
 
 test('the adapter must return a fulfilled adresses array object for a company recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(companyRecipient)
+  const member = recipientAdapter(companyRecipient)
   const address1 = member.addresses[2]
   const address3 = member.addresses[1]
 
@@ -384,13 +385,13 @@ test('the adapter must return a fulfilled adresses array object for a company re
 })
 
 test('the adapter must return non repeated addresses', () => {
-  const member = recipientAdapter
-    .adaptRecipientToMember(companyRecipientWithRepeatedAddresses)
+  const member = recipientAdapter(companyRecipientWithRepeatedAddresses)
+
   expect(member.addresses).toHaveLength(2)
 })
 
 test('the adapter must return a fulfilled member object for a individual recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(individualRecipient)
+  const member = recipientAdapter(individualRecipient)
 
   expect(member).toHaveProperty('legalName', 'John Doe')
   expect(member).toHaveProperty('tradeName', 'John Doe')
@@ -404,10 +405,11 @@ test('the adapter must return a fulfilled member object for a individual recipie
 })
 
 test('the adapter must return a fulfilled bankAccounts array object for a individual recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(individualRecipient)
+  const member = recipientAdapter(individualRecipient)
   const bankAccount = member.bankAccounts[0]
 
   expect(member.bankAccounts).toHaveLength(1)
+
   expect(bankAccount).toHaveProperty('countryId', 76)
   expect(bankAccount).toHaveProperty('bankId', '341')
   expect(bankAccount).toHaveProperty('branchCode', '3830')
@@ -419,7 +421,7 @@ test('the adapter must return a fulfilled bankAccounts array object for a indivi
 })
 
 test('the adapter must return a fulfilled adresses array object for a individual recipient', () => {
-  const member = recipientAdapter.adaptRecipientToMember(individualRecipient)
+  const member = recipientAdapter(individualRecipient)
   const address = member.addresses[0]
 
   expect(member.addresses).toHaveLength(1)
@@ -435,10 +437,9 @@ test('the adapter must return a fulfilled adresses array object for a individual
 })
 
 test('the adapter must return a fulfilled member object with no bank account', () => {
-  const member = recipientAdapter
-    .adaptRecipientToMember(individualRecipientWithoutBankAccount)
-  expect(member).not.toHaveProperty('bankAccounts')
+  const member = recipientAdapter(individualRecipientWithoutBankAccount)
 
+  expect(member).not.toHaveProperty('bankAccounts')
   expect(member).toHaveProperty('legalName', 'John Doe')
   expect(member).toHaveProperty('tradeName', 'John Doe')
   expect(member).toHaveProperty('legalPersonalityId', 2)
@@ -450,10 +451,9 @@ test('the adapter must return a fulfilled member object with no bank account', (
 })
 
 test('the adapter must return a fulfilled member object with no address', () => {
-  const member = recipientAdapter
-    .adaptRecipientToMember(individualRecipientWithoutAddress)
-  expect(member).not.toHaveProperty('addresses')
+  const member = recipientAdapter(individualRecipientWithoutAddress)
 
+  expect(member).not.toHaveProperty('addresses')
   expect(member).toHaveProperty('legalName', 'John Doe')
   expect(member).toHaveProperty('tradeName', 'John Doe')
   expect(member).toHaveProperty('legalPersonalityId', 2)
@@ -465,16 +465,15 @@ test('the adapter must return a fulfilled member object with no address', () => 
 })
 
 test('the adapter must return a fulfilled member object for a recipient with no register information', () => {
-  const member = recipientAdapter
-    .adaptRecipientToMember(recipientWithoutRegisterInformation)
+  const member = recipientAdapter(recipientWithoutRegisterInformation)
 
   expect(member).toHaveProperty('legalName', 'PEDRO H C FRANCESCHI')
-  expect(member).not.toHaveProperty('tradeName')
   expect(member).toHaveProperty('legalPersonalityId', 2)
   expect(member).toHaveProperty('taxId', '12388151708')
   expect(member).toHaveProperty('taxIdTypeId', 2)
+  expect(member).toHaveProperty('bankAccounts')
+  expect(member).not.toHaveProperty('tradeName')
   expect(member).not.toHaveProperty('birthdate')
   expect(member).not.toHaveProperty('motherName')
-  expect(member).toHaveProperty('bankAccounts')
   expect(member).not.toHaveProperty('addresses')
 })

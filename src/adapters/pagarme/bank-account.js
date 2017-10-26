@@ -1,14 +1,18 @@
-const { applySpec, prop, always } = require('ramda')
+const {
+  applySpec,
+  prop,
+  propEq,
+  always,
+  ifElse,
+} = require('ramda')
 
-function getAccountTypeId (bankAccount) {
-  if (bankAccount.type === 'conta_corrente') {
-    return 1
-  }
+const getAccountTypeId = ifElse(
+  propEq('type', 'conta_corrente'),
+  always(1),
+  always(2)
+)
 
-  return 2
-}
-
-module.exports.adapt = applySpec({
+const adapter = applySpec({
   countryId: always(76),
   bankId: prop('bank_code'),
   branchCode: prop('agencia'),
@@ -19,3 +23,4 @@ module.exports.adapt = applySpec({
   accountTypeId: getAccountTypeId,
 })
 
+module.exports = adapter

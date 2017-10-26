@@ -1,6 +1,6 @@
 const bankAccountAdapter = require('../../../src/adapters/pagarme/bank-account')
 
-const bankAccount = {
+const bankAccountMock = {
   id: 2080,
   company_id: '59e4f7e45d83380100ee3f12',
   bank_code: '341',
@@ -16,14 +16,14 @@ const bankAccount = {
 }
 
 test('the adapter must return a fulfilled bank account object', () => {
-  const bAccount = bankAccountAdapter.adapt(bankAccount)
+  const bankAccount = bankAccountAdapter(bankAccountMock)
 
-  expect(bAccount).toHaveProperty('countryId', 76)
-  expect(bAccount).toHaveProperty('bankId', '341')
-  expect(bAccount).toHaveProperty('branchCode', '3830')
-  expect(bAccount).toHaveProperty('branchCodeCheckDigit', null)
-  expect(bAccount).toHaveProperty('accountNumber', '15025')
-  expect(bAccount).toHaveProperty('accountNumberCheckDigit', '0')
-  expect(bAccount).toHaveProperty('statusId', 2)
-  expect(bAccount).toHaveProperty('accountTypeId', 1)
+  expect(bankAccount).toHaveProperty('countryId', 76)
+  expect(bankAccount).toHaveProperty('bankId', '341')
+  expect(bankAccount).toHaveProperty('branchCode', '3830')
+  expect(bankAccount).toHaveProperty('branchCodeCheckDigit', null)
+  expect(bankAccount).toHaveProperty('accountNumber', '15025')
+  expect(bankAccount).toHaveProperty('accountNumberCheckDigit', '0')
+  expect(bankAccount).toHaveProperty('statusId', 2)
+  expect(bankAccount).toHaveProperty('accountTypeId', 1)
 })
