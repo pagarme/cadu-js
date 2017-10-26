@@ -1,19 +1,19 @@
-const { isNil, when } = require('ramda')
+const {
+  when,
+  allPass,
+  has,
+  complement,
+} = require('ramda')
 
-const tokenException = () => {
-  throw new Error('Token is not defined.')
+const tokenAndEnvrionmentException = () => {
+  throw new Error('Token or Environment is not defined.')
 }
 
-const environmentException = () => {
-  throw new Error('Environment is not defined.')
-}
+const hasEnv = has('env')
+const hasToken = has('token')
+const notHasAllRequiredOptions = complement(allPass([hasEnv, hasToken]))
 
-exports.checkTokenIsDefined = when(
-  isNil,
-  tokenException
-)
-
-exports.checkEnvironmentIsDefined = when(
-  isNil,
-  environmentException
+exports.checkTokenAndEnvironment = when(
+  notHasAllRequiredOptions,
+  tokenAndEnvrionmentException
 )

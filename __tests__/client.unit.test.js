@@ -1,18 +1,18 @@
 const cadujs = require('../src/client')
 
 describe('Create client', () => {
-  test('without token', () => {
-    expect(() => cadujs.connect({ env: 'sandbox' }))
-      .toThrow('Token is not defined.')
+  test("should have property 'adapters'", () => {
+    expect(cadujs.adapters).toBeDefined()
   })
 
-  test('with token and without env', () => {
+  test("should have property 'connect'", () => {
+    expect(cadujs.connect).toBeDefined()
+  })
+
+  test('when try connect without token or env', () => {
+    expect(() => cadujs.connect({ env: 'live' }))
+      .toThrow('Token or Environment is not defined.')
     expect(() => cadujs.connect({ token: '1234' }))
-      .toThrow('Environment is not defined.')
-  })
-
-  test('with token and with env', () => {
-    expect(() => cadujs.connect({ token: '1234', env: 'sandbox' }))
-      .toBeDefined()
+      .toThrow('Token or Environment is not defined.')
   })
 })

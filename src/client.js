@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const { default: mappersmith, configs } = require('mappersmith')
 const { default: encodeJson } = require('mappersmith/middlewares/encode-json')
 
@@ -6,6 +5,7 @@ const {
   always,
   equals,
   ifElse,
+  assoc,
 } = require('ramda')
 
 const memberRoutes = require('./routes/member')
@@ -18,21 +18,16 @@ const phoneRoutes = require('./routes/member/phone')
 const countryRoutes = require('./routes/others/country')
 const economicActivitiesRoutes = require('./routes/others/economic-activities')
 const analysisRoutes = require('./routes/risk/analysis')
-
-const {
-  checkTokenIsDefined,
-  checkEnvironmentIsDefined,
-} = require('./validations/client')
-
 const adapters = require('./adapters')
 
-configs.Promise = Promise
+const { checkTokenAndEnvironment } = require('./validations/client')
+
+configs.Promise = require('bluebird')
 
 const connect = (options = {}) => {
-  const { token, env } = options
+  const { env } = options
 
-  checkTokenIsDefined(token)
-  checkEnvironmentIsDefined(env)
+  checkTokenAndEnvironment(options)
 
   const chooseHost = ifElse(
     equals('live'),
@@ -57,9 +52,10 @@ const connect = (options = {}) => {
     },
   })
 
-  library.adapters = adapters
-
-  return library
+  return assoc('adapters', adapters, library)
 }
 
-module.exports = { connect }
+module.exports = {
+  connect,
+  adapters,
+}
