@@ -1,5 +1,6 @@
 const { default: mappersmith, configs } = require('mappersmith')
 const { default: encodeJson } = require('mappersmith/middlewares/encode-json')
+const headerAuth = require('./middlewares/header-auth')
 
 const {
   always,
@@ -20,24 +21,38 @@ const economicActivitiesRoutes = require('./routes/others/economic-activities')
 const analysisRoutes = require('./routes/risk/analysis')
 const adapters = require('./adapters')
 
-const { checkTokenAndEnvironment } = require('./validations/client')
+const {
+  validateConfig,
+} = require('./validations/client')
 
 configs.Promise = require('bluebird')
 
-const connect = (options = {}) => {
-  const { env } = options
+const chooseHost = ifElse(
+  equals('live'),
+  always('https://api-cadu.stone.com.br'),
+  always('https://api-sandbox-cadu.stone.com.br')
+)
 
-  checkTokenAndEnvironment(options)
+const connect = (config = {}) => {
+  validateConfig(config)
 
-  const chooseHost = ifElse(
-    equals('live'),
-    always('https://api-cadu.stone.com.br'),
-    always('https://api-sandbox-cadu.stone.com.br')
-  )
+  const {
+    environment,
+    secret,
+    clientApplicationKey,
+    userIdentifier,
+  } = config
 
   const library = mappersmith({
-    middlewares: [encodeJson],
-    host: chooseHost(env),
+    middlewares: [
+      encodeJson,
+      headerAuth({
+        secret,
+        clientApplicationKey,
+        userIdentifier,
+      }),
+    ],
+    host: chooseHost(environment),
     resources: {
       Member: memberRoutes,
       Contact: contactRoutes,
