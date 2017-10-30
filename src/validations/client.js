@@ -1,4 +1,4 @@
-const { pluck } = require('ramda')
+const { pluck, isNil } = require('ramda')
 const Joi = require('joi')
 
 const configSchema = Joi.object().keys({
@@ -11,7 +11,7 @@ const configSchema = Joi.object().keys({
 const validateConfig = (config) => {
   const result = Joi.validate(config, configSchema)
 
-  if (result.error) {
+  if (!isNil(result.error)) {
     throw new Error(pluck('message', result.error.details))
   }
 }
