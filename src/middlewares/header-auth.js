@@ -1,5 +1,6 @@
 const hmacSha256 = require('crypto-js/hmac-sha256')
 const base64 = require('crypto-js/enc-base64')
+const moment = require('moment')
 const {
   equals,
   join,
@@ -17,7 +18,7 @@ const createAuthorization = (request, config) => {
   } = config
 
   const schema = 'CADU'
-  const timestamp = Date.now()
+  const timestamp = moment().utc().unix()
   const method = request.method()
   const cleanUrl = replace(/\?.+/g, '', request.url())
 
