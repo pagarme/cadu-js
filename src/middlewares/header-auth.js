@@ -1,5 +1,7 @@
 const hmacSha256 = require('crypto-js/hmac-sha256')
-const base64 = require('crypto-js/enc-base64')
+const encodeBase64 = require('crypto-js/enc-base64')
+const encodeHex = require('crypto-js/enc-hex')
+const encodeUTF8 = require('crypto-js/enc-utf8')
 const moment = require('moment')
 const {
   equals,
@@ -33,7 +35,9 @@ const createAuthorization = (request, config) => {
   const macString = join('.', macValues)
 
   const macSHA256 = hmacSha256(macString, secret)
-  const macBase64 = base64.stringify(macSHA256)
+  const macHex = toUpper(macSHA256.toString(encodeHex))
+  const macUTF8 = encodeUTF8.parse(macHex)
+  const macBase64 = encodeBase64.stringify(macUTF8)
 
   const id = `id="${clientApplicationKey}",`
   const ts = `ts="${timestamp}",`
