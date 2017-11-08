@@ -34,8 +34,8 @@ const createAuthorization = (request, config) => {
   const macSHA256 = hmacSha256(macString, secret)
   const macBase64 = base64.stringify(macSHA256)
 
-  const id = `id="${clientApplicationKey}"`
-  const ts = `ts="${timestamp}"`
+  const id = `id="${clientApplicationKey}",`
+  const ts = `ts="${timestamp}",`
   const mac = `mac="${macBase64}"`
 
   const authorizationValues = [schema, id, ts, mac]
