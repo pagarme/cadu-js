@@ -19,11 +19,16 @@
     "test:int": "./node_modules/jest/bin/jest.js int",
     "precommit": "npm run lint"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "dependencies": {
     "bluebird": "3.5.1",
+    "crypto-js": "3.1.8",
+    "joi": "12.0.0",
     "mappersmith": "2.9.1",
-    "ramda": "0.25.0",
-    "moment": "2.19.1"
+    "moment": "2.19.1",
+    "ramda": "0.25.0"
   },
   "devDependencies": {
     "babel-cli": "6.18.0",
@@ -37,7 +42,7 @@
     "eslint-config-pagarme-base": "2.0.0",
     "eslint-loader": "1.9.0",
     "eslint-plugin-import": "2.7.0",
-    "husky": "^0.14.3",
+    "husky": "0.14.3",
     "jest": "21.2.1",
     "webpack": "1.13.2"
   }

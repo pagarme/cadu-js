@@ -6,10 +6,9 @@ const {
   prop,
   path,
   always,
-  not,
   isNil,
+  complement,
   isEmpty,
-  compose,
   filter,
   pipe,
   has,
@@ -102,8 +101,8 @@ const getAdresses = (recipient) => {
   return uniq(addressesArray)
 }
 
-const notNil = compose(not, isNil)
-const notEmpty = compose(not, isEmpty)
+const notNil = complement(isNil)
+const notEmpty = complement(isEmpty)
 const filterNotNil = filter(notNil)
 const filterNotEmpty = filter(notEmpty)
 
