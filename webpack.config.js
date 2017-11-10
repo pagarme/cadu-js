@@ -31,4 +31,11 @@ module.exports = {
       },
     ],
   },
+  node: {
+    global: true,
+    Buffer: true,
+    crypto: 'empty',
+    net: 'empty',
+    dns: 'empty'
+  }
 }

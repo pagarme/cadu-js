@@ -1,4 +1,4 @@
-const path = require('path')
+const { join } = require('path')
 const { merge } = require('ramda')
 
 const base = require('./webpack.config.js')
@@ -6,7 +6,7 @@ const base = require('./webpack.config.js')
 const config = {
   target: 'web',
   output: {
-    path: path.join(__dirname, './browser'),
+    path: join(__dirname, './browser'),
     library: 'cadu',
     libraryTarget: 'umd',
     umdNamedDefine: true,
