@@ -42,7 +42,7 @@ describe('HeaderAuth', () => {
     expect(header).toMatchObject(headerExpect)
   })
 
-  test("should have a 'User-Identifier' property", () => {
+  test("should don't have a 'User-Identifier' property", () => {
     const headerExpect = {
       headers: {
         Authorization:
