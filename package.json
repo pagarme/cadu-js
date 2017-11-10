@@ -1,6 +1,6 @@
 {
   "name": "cadu-test-js",
-  "version": "0.0.6",
+  "version": "0.0.10",
   "description": "A JavaScript library to interface with CADU",
   "main": "src/client.js",
   "unpkg": "dist/cadu.min.js",
@@ -9,8 +9,8 @@
   "author": "Pagar.me Pagamentos S/A <http://github.com/pagarme>",
   "license": "MIT",
   "scripts": {
-    "build:commonjs": "webpack --optimize-minimize --optimize-dedupe --output-filename cadu.min.js",
-    "build:browser": "webpack --optimize-minimize --optimize-dedupe --config webpack.config.browser.js --output-filename cadu.min.js",
+    "build:commonjs": "webpack --optimize-dedupe",
+    "build:browser": "webpack --optimize-dedupe --config webpack.config.browser.js",
     "build:dev:node": "webpack",
     "build:dev:browser": "webpack --config webpack.config.browser.js",
     "lint": "./node_modules/eslint/bin/eslint.js src/ test/",
@@ -44,6 +44,7 @@
     "eslint-plugin-import": "2.7.0",
     "husky": "0.14.3",
     "jest": "21.2.1",
+    "json-loader": "0.5.7",
     "webpack": "1.13.2"
   }
 }
