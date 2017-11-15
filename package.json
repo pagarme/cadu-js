@@ -11,6 +11,7 @@
   "scripts": {
     "build:commonjs": "webpack --optimize-dedupe",
     "build:browser": "webpack --optimize-dedupe --config webpack.config.browser.js",
+    "build:all": "npm run build:commonjs && npm run build:browser",
     "build:dev:node": "webpack",
     "build:dev:browser": "webpack --config webpack.config.browser.js",
     "lint": "eslint src/ test/",
