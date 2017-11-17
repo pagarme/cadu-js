@@ -9,16 +9,18 @@ const {
   assoc,
 } = require('ramda')
 
-const memberRoutes = require('./routes/member')
-const contactRoutes = require('./routes/member/contact')
-const bankAccountRoutes = require('./routes/member/bank-account')
-const emailRoutes = require('./routes/member/email')
-const addressRoutes = require('./routes/member/address')
-const partnerRoutes = require('./routes/member/partner')
-const phoneRoutes = require('./routes/member/phone')
-const countryRoutes = require('./routes/others/country')
-const economicActivitiesRoutes = require('./routes/others/economic-activities')
-const analysisRoutes = require('./routes/risk/analysis')
+const {
+  memberRoutes,
+  contactRoutes,
+  bankAccountRoutes,
+  emailRoutes,
+  addressRoutes,
+  partnerRoutes,
+  phoneRoutes,
+  countryRoutes,
+  economicActivitiesRoutes,
+  analysisRoutes,
+} = require('./routes')
 const adapters = require('./adapters')
 
 const {
