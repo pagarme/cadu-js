@@ -13,10 +13,10 @@
     "build:browser": "webpack --optimize-dedupe --config webpack.config.browser.js",
     "build:dev:node": "webpack",
     "build:dev:browser": "webpack --config webpack.config.browser.js",
-    "lint": "./node_modules/eslint/bin/eslint.js src/ test/",
-    "test:all": "./node_modules/jest/bin/jest.js",
-    "test:unit": "./node_modules/jest/bin/jest.js unit",
-    "test:int": "./node_modules/jest/bin/jest.js int",
+    "lint": "eslint src/ test/",
+    "test:all": "jest",
+    "test:unit": "jest unit",
+    "test:int": "jest int",
     "precommit": "npm run lint"
   },
   "engines": {
