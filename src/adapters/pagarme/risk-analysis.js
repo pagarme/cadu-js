@@ -21,7 +21,7 @@ const policies = pipe(createPolicy, of)
 
 const adapter = applySpec({
   policies,
-  data: recipientAdapter,
+  member: recipientAdapter,
 })
 
 module.exports = adapter
