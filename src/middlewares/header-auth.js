@@ -53,6 +53,8 @@ const createAuthorization = (request, config) => {
     header['User-Identifier'] = userIdentifier
   }
 
+  header['Tenant-Id'] = 1
+
   return header
 }
 
