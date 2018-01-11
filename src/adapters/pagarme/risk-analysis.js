@@ -1,7 +1,8 @@
 const recipientAdapter = require('./recipient')
 const {
-  applySpec,
   always,
+  applySpec,
+  assoc,
   ifElse,
   pathEq,
   pipe,
@@ -17,11 +18,23 @@ const createPolicy = applySpec({
   forceReanalysis: always(false),
 })
 
+const serviceAgreements = [{
+  products: [{
+    id: 5, // Conta de Pagamento
+    providerId: 5, // Pagar.me
+  }],
+}]
+
+const addServiceAgreements = assoc('serviceAgreements', serviceAgreements)
+
 const policies = pipe(createPolicy, of)
 
 const adapter = applySpec({
   policies,
-  member: recipientAdapter,
+  member: pipe(
+    recipientAdapter,
+    addServiceAgreements
+  ),
 })
 
 module.exports = adapter
