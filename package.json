@@ -1,6 +1,6 @@
 {
   "name": "cadu-test-js",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A JavaScript library to interface with CADU",
   "main": "src/client.js",
   "unpkg": "dist/cadu.min.js",
