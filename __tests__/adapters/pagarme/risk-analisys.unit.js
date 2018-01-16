@@ -29,7 +29,7 @@ const individualRecipient = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2202,
     company_id: '59e607f06205130100994282',
     bank_code: '341',
@@ -51,7 +51,7 @@ test('the adapter must return a fulfilled adress object', () => {
   expect(riskAnalysis).toHaveProperty('policies')
 
   expect(riskAnalysis.policies).toHaveLength(1)
-  expect(riskAnalysis.policies[0]).toHaveProperty('id', 4)
+  expect(riskAnalysis.policies[0]).toHaveProperty('id', 6)
   expect(riskAnalysis.policies[0]).toHaveProperty('forceReanalysis', false)
 
   expect(riskAnalysis).toHaveProperty('member')

@@ -39,7 +39,7 @@ const tradeNameCompany = ifElse(
 const legalName = ifElse(
   hasRegisterInformation,
   legalNameCompany,
-  path(['bankAccount', 'legal_name'])
+  path(['BankAccount', 'legal_name'])
 )
 
 const tradeName = ifElse(
@@ -53,13 +53,13 @@ const documentTypeCode = ifElse(__, always(2), always(1))
 const personCode = ifElse(
   hasRegisterInformation,
   documentTypeCode(isIndividual),
-  documentTypeCode(pathEq(['bankAccount', 'document_type'], 'cpf'))
+  documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf'))
 )
 
 const taxId = ifElse(
   hasRegisterInformation,
   path(['register_information', 'document_number']),
-  path(['bankAccount', 'document_number'])
+  path(['BankAccount', 'document_number'])
 )
 
 const formatedBirthDate = register =>
@@ -73,8 +73,8 @@ const birthdate = ifElse(
 )
 
 const bankAccounts = ifElse(
-  has('bankAccount'),
-  pipe(prop('bankAccount'), bankAccountAdapter, of),
+  has('BankAccount'),
+  pipe(prop('BankAccount'), bankAccountAdapter, of),
   always(null)
 )
 
