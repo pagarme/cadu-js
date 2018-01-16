@@ -1,5 +1,5 @@
 {
-  "name": "cadu-js",
+  "name": "cadu",
   "version": "0.0.1",
   "description": "A JavaScript library to interface with CADU",
   "main": "src/client.js",
