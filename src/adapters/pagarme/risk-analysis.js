@@ -11,7 +11,7 @@ const {
 
 const isIndividual = pathEq(['register_information', 'type'], 'individual')
 
-const policyId = ifElse(isIndividual, always(4), always(3))
+const policyId = ifElse(isIndividual, always(6), always(5))
 
 const createPolicy = applySpec({
   id: policyId,

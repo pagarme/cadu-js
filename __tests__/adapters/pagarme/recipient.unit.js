@@ -60,7 +60,7 @@ const companyRecipient = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2080,
     company_id: '59e4f7e45d83380100ee3f12',
     bank_code: '341',
@@ -136,7 +136,7 @@ const companyRecipientWithRepeatedAddresses = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2080,
     company_id: '59e4f7e45d83380100ee3f12',
     bank_code: '341',
@@ -190,7 +190,7 @@ const individualRecipient = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2202,
     company_id: '59e607f06205130100994282',
     bank_code: '341',
@@ -275,7 +275,7 @@ const individualRecipientWithoutAddress = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2202,
     company_id: '59e607f06205130100994282',
     bank_code: '341',
@@ -312,7 +312,7 @@ const recipientWithoutRegisterInformation = {
   mdrs: null,
   status_reason: null,
   metadata: null,
-  bankAccount: {
+  BankAccount: {
     id: 2202,
     company_id: '59e607f06205130100994282',
     bank_code: '341',
