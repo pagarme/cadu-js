@@ -13,6 +13,7 @@ const config = {
     filename: 'cadu.js',
     sourceMapFilename: 'cadu.js.map',
   },
+  externals: [],
 }
 
 module.exports = merge(base, config)
