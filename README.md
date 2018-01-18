@@ -24,13 +24,13 @@ This library covers all your needs for integrating with CadU, providing:
 First, install it:
 
 ```bash
-yarn add cadu-js
+yarn add cadu
 ```
 
 Or using npm:
 
 ```bash
-npm install cadu-js
+npm install cadu
 ```
 
 CadU JavaScript library can be used in two ways:
@@ -40,13 +40,13 @@ CadU JavaScript library can be used in two ways:
 Import like usual:
 
 ```js
-import cadujs from 'cadu-js'
+import cadu from 'cadu'
 ```
 
 also works using `require`:
 
 ```js
-const cadujs = require('cadu-js')
+const cadu = require('cadu')
 ```
 
 ### Browser (CommonJS) [In Development]
@@ -54,13 +54,13 @@ const cadujs = require('cadu-js')
 Import the browser build:
 
 ```js
-import cadujs from 'cadu-js/browser'
+import cadu from 'cadu/browser'
 ```
 
 also works using `require`:
 
 ```js
-const cadujs = require('cadu-js/browser')
+const cadu = require('cadu/browser')
 ```
 
 ### Client API
@@ -76,9 +76,9 @@ error will be returned. If an authentication error happens, you can catch
 the error with the `Promise` interface:
 
 ```javascript
-import cadujs from 'cadu-js'
+import cadu from 'cadu'
 
-cadujs.client.connect({ 
+cadu.client.connect({ 
   secret: '1234', 
   clientApplicationKey: '1234-1234-1234', 
   environment: 'sandbox', 
