@@ -45,7 +45,7 @@ const legalName = ifElse(
 const tradeName = ifElse(
   hasRegisterInformation,
   tradeNameCompany,
-  always(null)
+  path(['BankAccount', 'legal_name'])
 )
 
 const documentTypeCode = ifElse(__, always(2), always(1))

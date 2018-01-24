@@ -472,7 +472,7 @@ test('the adapter must return a fulfilled member object for a recipient with no 
   expect(member).toHaveProperty('taxId', '12388151708')
   expect(member).toHaveProperty('taxIdTypeId', 2)
   expect(member).toHaveProperty('bankAccounts')
-  expect(member).not.toHaveProperty('tradeName')
+  expect(member).toHaveProperty('tradeName', 'PEDRO H C FRANCESCHI')
   expect(member).not.toHaveProperty('birthdate')
   expect(member).not.toHaveProperty('motherName')
   expect(member).not.toHaveProperty('addresses')
