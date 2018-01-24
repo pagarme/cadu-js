@@ -32086,7 +32086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var legalName = ifElse(hasRegisterInformation, legalNameCompany, path(['BankAccount', 'legal_name']));
 	
-	var tradeName = ifElse(hasRegisterInformation, tradeNameCompany, always(null));
+	var tradeName = ifElse(hasRegisterInformation, tradeNameCompany, path(['BankAccount', 'legal_name']));
 	
 	var documentTypeCode = ifElse(__, always(2), always(1));
 	
