@@ -93,7 +93,7 @@ As the entire library is based on promises, you can also use ES6 generators
 with every call to make code more procedural:
 
 ```javascript
-import cadujs from 'cadu-js'
+import cadujs from 'cadu'
 
 let client
 
