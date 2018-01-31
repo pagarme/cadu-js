@@ -629,24 +629,27 @@ module.exports =
 	var addressAdapter = __webpack_require__(24);
 	
 	var _require = __webpack_require__(9),
-	    applySpec = _require.applySpec,
-	    prop = _require.prop,
-	    path = _require.path,
 	    always = _require.always,
-	    isNil = _require.isNil,
+	    anyPass = _require.anyPass,
+	    applySpec = _require.applySpec,
+	    both = _require.both,
 	    complement = _require.complement,
-	    isEmpty = _require.isEmpty,
 	    filter = _require.filter,
-	    pipe = _require.pipe,
 	    has = _require.has,
 	    ifElse = _require.ifElse,
-	    pathEq = _require.pathEq,
-	    __ = _require.__,
+	    isEmpty = _require.isEmpty,
+	    isNil = _require.isNil,
 	    of = _require.of,
+	    path = _require.path,
+	    pathEq = _require.pathEq,
+	    pipe = _require.pipe,
+	    prop = _require.prop,
 	    uniq = _require.uniq,
-	    anyPass = _require.anyPass;
+	    __ = _require.__;
 	
-	var hasRegisterInformation = has('register_information');
+	var isDefined = both(complement(isNil), complement(isEmpty));
+	
+	var isDefinedRegisterInformation = pipe(prop('register_information'), isDefined);
 	
 	var isIndividual = pathEq(['register_information', 'type'], 'individual');
 	
@@ -654,15 +657,15 @@ module.exports =
 	
 	var tradeNameCompany = ifElse(isIndividual, path(['register_information', 'name']), path(['register_information', 'trading_name']));
 	
-	var legalName = ifElse(hasRegisterInformation, legalNameCompany, path(['BankAccount', 'legal_name']));
+	var legalName = ifElse(isDefinedRegisterInformation, legalNameCompany, path(['BankAccount', 'legal_name']));
 	
-	var tradeName = ifElse(hasRegisterInformation, tradeNameCompany, path(['BankAccount', 'legal_name']));
+	var tradeName = ifElse(isDefinedRegisterInformation, tradeNameCompany, path(['BankAccount', 'legal_name']));
 	
 	var documentTypeCode = ifElse(__, always(2), always(1));
 	
-	var personCode = ifElse(hasRegisterInformation, documentTypeCode(isIndividual), documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf')));
+	var personCode = ifElse(isDefinedRegisterInformation, documentTypeCode(isIndividual), documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf')));
 	
-	var taxId = ifElse(hasRegisterInformation, path(['register_information', 'document_number']), path(['BankAccount', 'document_number']));
+	var taxId = ifElse(isDefinedRegisterInformation, path(['register_information', 'document_number']), path(['BankAccount', 'document_number']));
 	
 	var formatedBirthDate = function formatedBirthDate(register) {
 	  return moment(register.register_information.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD');
