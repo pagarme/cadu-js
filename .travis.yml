@@ -1,7 +1,12 @@
 language: node_js
 node_js:
-  - "6.1"
-  - "4.4"
+  - "8.9.4"
+
+before_install:
+  - npm install -g yarn
+
+script:
+  - yarn test:all
 
 sudo: false
 
