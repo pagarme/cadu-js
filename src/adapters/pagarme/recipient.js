@@ -2,25 +2,34 @@ const moment = require('moment')
 const bankAccountAdapter = require('./bank-account')
 const addressAdapter = require('./address')
 const {
-  applySpec,
-  prop,
-  path,
   always,
-  isNil,
+  anyPass,
+  applySpec,
+  both,
   complement,
-  isEmpty,
   filter,
-  pipe,
   has,
   ifElse,
-  pathEq,
-  __,
+  isEmpty,
+  isNil,
   of,
+  path,
+  pathEq,
+  pipe,
+  prop,
   uniq,
-  anyPass,
+  __,
 } = require('ramda')
 
-const hasRegisterInformation = has('register_information')
+const isDefined = both(
+  complement(isNil),
+  complement(isEmpty)
+)
+
+const isDefinedRegisterInformation = pipe(
+  prop('register_information'),
+  isDefined
+)
 
 const isIndividual = pathEq(['register_information', 'type'], 'individual')
 
@@ -37,13 +46,13 @@ const tradeNameCompany = ifElse(
 )
 
 const legalName = ifElse(
-  hasRegisterInformation,
+  isDefinedRegisterInformation,
   legalNameCompany,
   path(['BankAccount', 'legal_name'])
 )
 
 const tradeName = ifElse(
-  hasRegisterInformation,
+  isDefinedRegisterInformation,
   tradeNameCompany,
   path(['BankAccount', 'legal_name'])
 )
@@ -51,13 +60,13 @@ const tradeName = ifElse(
 const documentTypeCode = ifElse(__, always(2), always(1))
 
 const personCode = ifElse(
-  hasRegisterInformation,
+  isDefinedRegisterInformation,
   documentTypeCode(isIndividual),
   documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf'))
 )
 
 const taxId = ifElse(
-  hasRegisterInformation,
+  isDefinedRegisterInformation,
   path(['register_information', 'document_number']),
   path(['BankAccount', 'document_number'])
 )
