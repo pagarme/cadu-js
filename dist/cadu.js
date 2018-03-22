@@ -148,9 +148,7 @@ module.exports =
 	var moment = __webpack_require__(8);
 	
 	var _require = __webpack_require__(9),
-	    equals = _require.equals,
 	    join = _require.join,
-	    not = _require.not,
 	    replace = _require.replace,
 	    toLower = _require.toLower,
 	    toUpper = _require.toUpper;
@@ -185,11 +183,9 @@ module.exports =
 	
 	  var header = { Authorization: Authorization };
 	
-	  if (not(equals('get', method))) {
+	  if (method !== 'get') {
 	    header['User-Identifier'] = userIdentifier;
 	  }
-	
-	  header['Tenant-Id'] = 1;
 	
 	  return header;
 	};
