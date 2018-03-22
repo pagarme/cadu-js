@@ -2,7 +2,7 @@
 
 # CadU Javascript Library
 
-A JavaScript library to interface with CadU API, it works in Node.js and Browser (in development).
+A JavaScript library to interface with CadU API, it works in Node.js.
 
 <br>
 
@@ -49,20 +49,6 @@ also works using `require`:
 const cadu = require('cadu')
 ```
 
-### Browser (CommonJS) [In Development]
-
-Import the browser build:
-
-```js
-import cadu from 'cadu/browser'
-```
-
-also works using `require`:
-
-```js
-const cadu = require('cadu/browser')
-```
-
 ### Client API
 
 All of CadU REST API endpoints are covered in the `client` object. Every
@@ -76,47 +62,18 @@ error will be returned. If an authentication error happens, you can catch
 the error with the `Promise` interface:
 
 ```javascript
-import cadu from 'cadu'
+import cadujs from 'cadu'
 
-cadu.client.connect({ 
-  secret: '1234', 
-  clientApplicationKey: '1234-1234-1234', 
-  environment: 'sandbox', 
+cadujs.connect({
+  secret: '1234',
+  clientApplicationKey: '1234-1234-1234',
+  environment: 'sandbox',
   userIdentifier: 'pagarme@pagar.me',
 })
   .then(client => client.Members.all())
   .then(console.log)
   .catch(console.error)
 ```
-
-As the entire library is based on promises, you can also use ES6 generators
-with every call to make code more procedural:
-
-```javascript
-import cadujs from 'cadu'
-
-let client
-
-try {
-  client = yield cadujs.client.connect({
-    secret: '1234', 
-    clientApplicationKey: '1234-1234-1234', 
-    environment: 'sandbox', 
-    userIdentifier: 'pagarme@pagar.me',
-  })
-} catch (err) {
-  console.log(err)
-}
-  
-try {
-  const members = yield client.Members.all()
-  console.log(members)
-} catch (err) {
-  console.log(err)
-}
-```
-
-The downside of this approach is that you need to handle errors using try/catch.
 
 ### <a name="parameters"></a> Parameters
 
@@ -166,10 +123,7 @@ Mappersmith will provide an instance of its own `Response` object to the promise
 
 ## Building
 
-To build the library, use `yarn build:all`.
-
-* Node.js build is produced inside the `dist` directory.
-* Browser build is produced inside the `browser` directory.
+To build for Node.js the library, use `yarn build:commonjs`.
 
 ## Testing
 

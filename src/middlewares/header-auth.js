@@ -4,9 +4,7 @@ const encodeHex = require('crypto-js/enc-hex')
 const encodeUTF8 = require('crypto-js/enc-utf8')
 const moment = require('moment')
 const {
-  equals,
   join,
-  not,
   replace,
   toLower,
   toUpper,
@@ -49,11 +47,9 @@ const createAuthorization = (request, config) => {
 
   const header = { Authorization }
 
-  if (not(equals('get', method))) {
+  if (method !== 'get') {
     header['User-Identifier'] = userIdentifier
   }
-
-  header['Tenant-Id'] = 1
 
   return header
 }
