@@ -11,7 +11,6 @@ const companyRecipient = {
     type: 'corporation',
     document_number: '43633675456',
     company_name: 'Full Name Company',
-    trading_name: 'Known Company Name',
     cnae: '9999-9/99',
     phone_numbers: [Object],
     corporation_type: 'ltda',
@@ -333,7 +332,7 @@ test('the adapter must return a fulfilled member object for a company recipient'
 
   expect(member).not.toHaveProperty('birthdate')
   expect(member).toHaveProperty('legalName', 'Full Name Company')
-  expect(member).toHaveProperty('tradeName', 'Known Company Name')
+  expect(member).toHaveProperty('tradeName', 'Full Name Company')
   expect(member).toHaveProperty('legalPersonalityId', 1)
   expect(member).toHaveProperty('taxId', '43633675456')
   expect(member).toHaveProperty('taxIdTypeId', 1)
