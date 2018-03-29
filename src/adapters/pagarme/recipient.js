@@ -32,6 +32,7 @@ const isDefinedRegisterInformation = pipe(
 )
 
 const isIndividual = pathEq(['register_information', 'type'], 'individual')
+const hasTradeName = has(path(['register_information', 'trading_name']))
 
 const legalNameCompany = ifElse(
   isIndividual,
@@ -42,7 +43,11 @@ const legalNameCompany = ifElse(
 const tradeNameCompany = ifElse(
   isIndividual,
   path(['register_information', 'name']),
-  path(['register_information', 'trading_name'])
+  ifElse(
+    hasTradeName,
+    path(['register_information', 'trading_name']),
+    path(['register_information', 'company_name'])
+  )
 )
 
 const legalName = ifElse(
