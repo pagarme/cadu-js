@@ -17,7 +17,7 @@ A JavaScript library to interface with CadU API, it works in Node.js.
 This library covers all your needs for integrating with CadU, providing:
 
 * A clean Promise-based interface for all endpoints in CadU API
-* The library was create using [mappersmith](https://github.com/mappersmith/)
+* The library was create using [mappersmith](https://github.com/tulios/mappersmith)
 
 ## How to use
 
