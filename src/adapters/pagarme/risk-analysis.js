@@ -4,12 +4,12 @@ const {
   applySpec,
   assoc,
   ifElse,
-  pathEq,
+  propEq,
   pipe,
   of,
 } = require('ramda')
 
-const isIndividual = pathEq(['register_information', 'type'], 'individual')
+const isIndividual = propEq('document_type', 'cpf')
 
 const policyId = ifElse(isIndividual, always(6), always(5))
 
