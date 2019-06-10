@@ -15,6 +15,7 @@ const {
   of,
   path,
   pathEq,
+  propEq,
   pipe,
   prop,
   uniq,
@@ -53,13 +54,13 @@ const tradeNameCompany = ifElse(
 const legalName = ifElse(
   isDefinedRegisterInformation,
   legalNameCompany,
-  path(['BankAccount', 'legal_name'])
+  prop('legal_name')
 )
 
 const tradeName = ifElse(
   isDefinedRegisterInformation,
   tradeNameCompany,
-  path(['BankAccount', 'legal_name'])
+  prop('legal_name')
 )
 
 const documentTypeCode = ifElse(__, always(2), always(1))
@@ -67,13 +68,13 @@ const documentTypeCode = ifElse(__, always(2), always(1))
 const personCode = ifElse(
   isDefinedRegisterInformation,
   documentTypeCode(isIndividual),
-  documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf'))
+  documentTypeCode(propEq('document_type', 'cpf'))
 )
 
 const taxId = ifElse(
   isDefinedRegisterInformation,
   path(['register_information', 'document_number']),
-  path(['BankAccount', 'document_number'])
+  prop('document_number')
 )
 
 const formatedBirthDate = register =>
@@ -137,4 +138,3 @@ module.exports = pipe(
   filterNotEmpty,
   filterNotNil
 )
-
