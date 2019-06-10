@@ -5,7 +5,6 @@ const {
   always,
   anyPass,
   applySpec,
-  both,
   complement,
   filter,
   has,
@@ -18,19 +17,10 @@ const {
   propEq,
   pipe,
   prop,
+  reject,
   uniq,
   __,
 } = require('ramda')
-
-const isDefined = both(
-  complement(isNil),
-  complement(isEmpty)
-)
-
-const isDefinedRegisterInformation = pipe(
-  prop('register_information'),
-  isDefined
-)
 
 const isIndividual = pathEq(['register_information', 'type'], 'individual')
 const hasTradeName = has(path(['register_information', 'trading_name']))
@@ -52,13 +42,13 @@ const tradeNameCompany = ifElse(
 )
 
 const legalName = ifElse(
-  isDefinedRegisterInformation,
+  has('register_information'),
   legalNameCompany,
   prop('legal_name')
 )
 
 const tradeName = ifElse(
-  isDefinedRegisterInformation,
+  has('register_information'),
   tradeNameCompany,
   prop('legal_name')
 )
@@ -66,13 +56,13 @@ const tradeName = ifElse(
 const documentTypeCode = ifElse(__, always(2), always(1))
 
 const personCode = ifElse(
-  isDefinedRegisterInformation,
+  has('register_information'),
   documentTypeCode(isIndividual),
   documentTypeCode(propEq('document_type', 'cpf'))
 )
 
 const taxId = ifElse(
-  isDefinedRegisterInformation,
+  has('register_information'),
   path(['register_information', 'document_number']),
   prop('document_number')
 )
@@ -133,7 +123,10 @@ const recipient = applySpec({
   addresses: getAdresses,
 })
 
+const rejectNullOrEmpty = reject(isNil)
+
 module.exports = pipe(
+  rejectNullOrEmpty,
   recipient,
   filterNotEmpty,
   filterNotNil
