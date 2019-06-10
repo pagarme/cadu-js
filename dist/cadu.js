@@ -628,7 +628,6 @@ module.exports =
 	    always = _require.always,
 	    anyPass = _require.anyPass,
 	    applySpec = _require.applySpec,
-	    both = _require.both,
 	    complement = _require.complement,
 	    filter = _require.filter,
 	    has = _require.has,
@@ -638,30 +637,29 @@ module.exports =
 	    of = _require.of,
 	    path = _require.path,
 	    pathEq = _require.pathEq,
+	    propEq = _require.propEq,
 	    pipe = _require.pipe,
 	    prop = _require.prop,
+	    reject = _require.reject,
 	    uniq = _require.uniq,
 	    __ = _require.__;
 	
-	var isDefined = both(complement(isNil), complement(isEmpty));
-	
-	var isDefinedRegisterInformation = pipe(prop('register_information'), isDefined);
-	
 	var isIndividual = pathEq(['register_information', 'type'], 'individual');
+	var hasTradeName = has(path(['register_information', 'trading_name']));
 	
 	var legalNameCompany = ifElse(isIndividual, path(['register_information', 'name']), path(['register_information', 'company_name']));
 	
-	var tradeNameCompany = ifElse(isIndividual, path(['register_information', 'name']), path(['register_information', 'trading_name']));
+	var tradeNameCompany = ifElse(isIndividual, path(['register_information', 'name']), ifElse(hasTradeName, path(['register_information', 'trading_name']), path(['register_information', 'company_name'])));
 	
-	var legalName = ifElse(isDefinedRegisterInformation, legalNameCompany, path(['BankAccount', 'legal_name']));
+	var legalName = ifElse(has('register_information'), legalNameCompany, prop('legal_name'));
 	
-	var tradeName = ifElse(isDefinedRegisterInformation, tradeNameCompany, path(['BankAccount', 'legal_name']));
+	var tradeName = ifElse(has('register_information'), tradeNameCompany, prop('legal_name'));
 	
 	var documentTypeCode = ifElse(__, always(2), always(1));
 	
-	var personCode = ifElse(isDefinedRegisterInformation, documentTypeCode(isIndividual), documentTypeCode(pathEq(['BankAccount', 'document_type'], 'cpf')));
+	var personCode = ifElse(has('register_information'), documentTypeCode(isIndividual), documentTypeCode(propEq('document_type', 'cpf')));
 	
-	var taxId = ifElse(isDefinedRegisterInformation, path(['register_information', 'document_number']), path(['BankAccount', 'document_number']));
+	var taxId = ifElse(has('register_information'), path(['register_information', 'document_number']), prop('document_number'));
 	
 	var formatedBirthDate = function formatedBirthDate(register) {
 	  return moment(register.register_information.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD');
@@ -711,7 +709,9 @@ module.exports =
 	  addresses: getAdresses
 	});
 	
-	module.exports = pipe(recipient, filterNotEmpty, filterNotNil);
+	var rejectNullOrEmpty = reject(isNil);
+	
+	module.exports = pipe(rejectNullOrEmpty, recipient, filterNotEmpty, filterNotNil);
 
 /***/ },
 /* 23 */
@@ -779,11 +779,11 @@ module.exports =
 	    applySpec = _require.applySpec,
 	    assoc = _require.assoc,
 	    ifElse = _require.ifElse,
-	    pathEq = _require.pathEq,
+	    propEq = _require.propEq,
 	    pipe = _require.pipe,
 	    of = _require.of;
 	
-	var isIndividual = pathEq(['register_information', 'type'], 'individual');
+	var isIndividual = propEq('document_type', 'cpf');
 	
 	var policyId = ifElse(isIndividual, always(6), always(5));
 	
