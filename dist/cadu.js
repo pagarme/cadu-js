@@ -778,17 +778,20 @@ module.exports =
 	    always = _require.always,
 	    applySpec = _require.applySpec,
 	    assoc = _require.assoc,
-	    ifElse = _require.ifElse,
-	    propEq = _require.propEq,
+	    cond = _require.cond,
+	    has = _require.has,
+	    of = _require.of,
+	    pathEq = _require.pathEq,
 	    pipe = _require.pipe,
-	    of = _require.of;
+	    prop = _require.prop,
+	    T = _require.T;
 	
-	var isIndividual = propEq('document_type', 'cpf');
+	var isIndividual = pathEq(['recipient', 'document_type'], 'cpf');
 	
-	var policyId = ifElse(isIndividual, always(6), always(5));
+	var getPolicyId = cond([[has('policyId'), prop('policyId')], [isIndividual, always(6)], [T, always(5)]]);
 	
 	var createPolicy = applySpec({
-	  id: policyId,
+	  id: getPolicyId,
 	  forceReanalysis: always(false)
 	});
 	
@@ -805,7 +808,7 @@ module.exports =
 	
 	var adapter = applySpec({
 	  policies: policies,
-	  member: pipe(recipientAdapter, addServiceAgreements)
+	  member: pipe(prop('recipient'), recipientAdapter, addServiceAgreements)
 	});
 	
 	module.exports = adapter;
