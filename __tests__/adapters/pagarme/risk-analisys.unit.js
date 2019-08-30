@@ -74,6 +74,52 @@ const individualRecipientWithoutBankAccount = {
   legal_name: 'John Doe',
 }
 
+const corporationRecipient = {
+  id: 're_cj8unlow8000r01peowiwiv76',
+  anticipation_fee: null,
+  automatic_anticipation_type: 'full',
+  automatic_anticipation_1025_delay: 15,
+  allow_inter_recipient_transfer: true,
+  cadu_id: null,
+  register_information: {
+    type: 'corporation',
+    document_number: '35848767000150',
+    email: 'some@email.com',
+    name: 'John Doe Corporation',
+  },
+  company_id: '59e51b7c2c8a22010014f9c8',
+  bank_account_id: 2181,
+  transfer_enabled: false,
+  postback_url: '',
+  transfer_interval: 'daily',
+  transfer_day: 0,
+  automatic_anticipation_enabled: false,
+  anticipatable_volume_percentage: 0,
+  status: 'registration',
+  last_transfer: null,
+  automatic_anticipation_days: null,
+  mdrs: null,
+  status_reason: null,
+  metadata: null,
+  document_type: 'cnpj',
+  document_number: '35848767000150',
+  legal_name: 'John Doe Corporation',
+  BankAccount: {
+    id: 2202,
+    company_id: '59e607f06205130100994282',
+    bank_code: '341',
+    agencia: '3830',
+    agencia_dv: null,
+    conta: '15025',
+    conta_dv: '0',
+    document_type: 'cnpj',
+    type: 'conta_corrente',
+    document_number: '35848767000150',
+    legal_name: 'John Doe Corporation',
+    charge_transfer_fees: true,
+  },
+}
+
 test('the adapter must return a fulfilled adress object', () => {
   const riskAnalysis = riskAnalysisAdapter(individualRecipient)
 
@@ -126,4 +172,16 @@ test('the adapter must return a fulfilled document_number object', () => {
   expect(riskAnalysis.member.serviceAgreements[0]).toHaveProperty('products')
   expect(riskAnalysis.member.serviceAgreements[0].products[0]).toHaveProperty('id', 5)
   expect(riskAnalysis.member.serviceAgreements[0].products[0]).toHaveProperty('providerId', 5)
+})
+
+test('the adapter must return policy id 5 for corporations', () => {
+  const riskAnalysis = riskAnalysisAdapter(corporationRecipient)
+
+  expect(riskAnalysis).toHaveProperty('policies')
+
+  expect(riskAnalysis.policies).toHaveLength(1)
+  expect(riskAnalysis.policies[0]).toHaveProperty('id', 5)
+  expect(riskAnalysis.policies[0]).toHaveProperty('forceReanalysis', false)
+
+  expect(riskAnalysis).toHaveProperty('member')
 })
