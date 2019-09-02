@@ -3,18 +3,25 @@ const {
   always,
   applySpec,
   assoc,
-  ifElse,
-  propEq,
-  pipe,
+  cond,
+  has,
   of,
+  pathEq,
+  pipe,
+  prop,
+  T,
 } = require('ramda')
 
-const isIndividual = propEq('document_type', 'cpf')
+const isIndividual = pathEq(['recipient', 'document_type'], 'cpf')
 
-const policyId = ifElse(isIndividual, always(6), always(5))
+const getPolicyId = cond([
+  [has('policyId'), prop('policyId')],
+  [isIndividual, always(6)],
+  [T, always(5)],
+])
 
 const createPolicy = applySpec({
-  id: policyId,
+  id: getPolicyId,
   forceReanalysis: always(false),
 })
 
@@ -32,6 +39,7 @@ const policies = pipe(createPolicy, of)
 const adapter = applySpec({
   policies,
   member: pipe(
+    prop('recipient'),
     recipientAdapter,
     addServiceAgreements
   ),
