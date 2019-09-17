@@ -78,6 +78,65 @@ const companyRecipient = {
   },
 }
 
+const companyRecipientWithoutAddresses = {
+  id: 're_cj8uhzne9000v01pe9westv13',
+  anticipation_fee: null,
+  automatic_anticipation_type: 'full',
+  automatic_anticipation_1025_delay: 15,
+  allow_inter_recipient_transfer: true,
+  cadu_id: null,
+  register_information: {
+    type: 'corporation',
+    document_number: '43633675456',
+    company_name: 'Full Name Company',
+    cnae: '9999-9/99',
+    phone_numbers: [Object],
+    corporation_type: 'ltda',
+    founding_date: '06/06/1966',
+    managing_partners: [Object],
+    main_address: {
+      neighborhood: 'bairro',
+      street: 'rua',
+      street_number: '240',
+      zipcode: '04571020',
+      complementary: 'complemento',
+      state: 'PA',
+      city: 'Belém',
+    },
+  },
+  company_id: '59e4f6aa190bd601000cfe92',
+  bank_account_id: 2059,
+  transfer_enabled: false,
+  postback_url: '',
+  transfer_interval: 'daily',
+  transfer_day: 0,
+  automatic_anticipation_enabled: false,
+  anticipatable_volume_percentage: 0,
+  status: 'registration',
+  last_transfer: null,
+  automatic_anticipation_days: null,
+  mdrs: null,
+  status_reason: null,
+  metadata: null,
+  document_type: 'cpf',
+  document_number: '12388151708',
+  legal_name: 'PEDRO H C FRANCESCHI',
+  BankAccount: {
+    id: 2080,
+    company_id: '59e4f7e45d83380100ee3f12',
+    bank_code: '341',
+    agencia: '3830',
+    agencia_dv: null,
+    conta: '15025',
+    conta_dv: '0',
+    document_type: 'cpf',
+    type: 'conta_corrente',
+    document_number: '12388151708',
+    legal_name: 'PEDRO H C FRANCESCHI',
+    charge_transfer_fees: true,
+  },
+}
+
 const companyRecipientWithRepeatedAddresses = {
   id: 're_cj8uhzne9000v01pe9westv13',
   anticipation_fee: null,
@@ -493,4 +552,19 @@ test('the adapter must return a fulfilled member object for a recipient with no 
   expect(member).not.toHaveProperty('birthdate')
   expect(member).not.toHaveProperty('motherName')
   expect(member).not.toHaveProperty('addresses')
+})
+
+test('the adapter must return a fulfilled member object with only main address', () => {
+  const member = recipientAdapter(companyRecipientWithoutAddresses)
+
+  expect(member).not.toHaveProperty('birthdate')
+  expect(member).toHaveProperty('legalName', 'Full Name Company')
+  expect(member).toHaveProperty('tradeName', 'Full Name Company')
+  expect(member).toHaveProperty('legalPersonalityId', 1)
+  expect(member).toHaveProperty('taxId', '43633675456')
+  expect(member).toHaveProperty('taxIdTypeId', 1)
+  expect(member).toHaveProperty('motherName', undefined)
+  expect(member).toHaveProperty('bankAccounts')
+  expect(member).toHaveProperty('addresses')
+  expect(member.addresses).toHaveLength(1)
 })

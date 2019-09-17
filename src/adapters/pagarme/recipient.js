@@ -93,7 +93,11 @@ const getAdresses = (recipient) => {
   let addressesArray = []
 
   if (hasAddress(recipient)) {
-    const { addresses, address, main_address } = recipient.register_information
+    const {
+      addresses = [],
+      address,
+      main_address,
+    } = recipient.register_information
 
     if (isIndividual(recipient)) {
       addressesArray.push(addressAdapter(address))
