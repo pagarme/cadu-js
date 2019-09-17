@@ -676,7 +676,8 @@ module.exports =
 	
 	  if (hasAddress(recipient)) {
 	    var _recipient$register_i = recipient.register_information,
-	        addresses = _recipient$register_i.addresses,
+	        _recipient$register_i2 = _recipient$register_i.addresses,
+	        addresses = _recipient$register_i2 === undefined ? [] : _recipient$register_i2,
 	        address = _recipient$register_i.address,
 	        main_address = _recipient$register_i.main_address;
 	
