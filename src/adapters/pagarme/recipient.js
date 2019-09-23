@@ -125,6 +125,7 @@ const recipient = applySpec({
   motherName: path(['register_information', 'mother_name']),
   bankAccounts,
   addresses: getAdresses,
+  websiteUrl: path(['register_information', 'site_url']),
 })
 
 const rejectNullOrEmpty = reject(isNil)

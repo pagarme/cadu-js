@@ -707,7 +707,8 @@ module.exports =
 	  birthdate: birthdate,
 	  motherName: path(['register_information', 'mother_name']),
 	  bankAccounts: bankAccounts,
-	  addresses: getAdresses
+	  addresses: getAdresses,
+	  websiteUrl: path(['register_information', 'site_url'])
 	});
 	
 	var rejectNullOrEmpty = reject(isNil);

@@ -16,6 +16,7 @@ const companyRecipient = {
     corporation_type: 'ltda',
     founding_date: '06/06/1966',
     managing_partners: [Object],
+    site_url: 'https://pagar.me',
     main_address: {
       neighborhood: 'bairro',
       street: 'rua',
@@ -296,6 +297,7 @@ const individualRecipientWithoutBankAccount = {
     name: 'John Doe',
     mother_name: "John Doe's Mom",
     birthdate: '30/10/1980',
+    site_url: 'https://pagar.me',
   },
   company_id: '59e51b7c2c8a22010014f9c8',
   bank_account_id: 2181,
@@ -416,6 +418,7 @@ test('the adapter must return a fulfilled member object for a company recipient'
   expect(member).toHaveProperty('motherName', undefined)
   expect(member).toHaveProperty('bankAccounts')
   expect(member).toHaveProperty('addresses')
+  expect(member).toHaveProperty('websiteUrl', 'https://pagar.me')
 })
 
 test('the adapter must return a fulfilled bankAccounts array object for a company recipient', () => {
@@ -478,6 +481,7 @@ test('the adapter must return a fulfilled member object for a individual recipie
   expect(member).toHaveProperty('motherName', "John Doe's Mom")
   expect(member).toHaveProperty('bankAccounts')
   expect(member).toHaveProperty('addresses')
+  expect(member).toHaveProperty('websiteUrl', undefined)
 })
 
 test('the adapter must return a fulfilled bankAccounts array object for a individual recipient', () => {
@@ -524,6 +528,7 @@ test('the adapter must return a fulfilled member object with no bank account', (
   expect(member).toHaveProperty('birthdate', '1980-10-30')
   expect(member).toHaveProperty('motherName', "John Doe's Mom")
   expect(member).toHaveProperty('addresses')
+  expect(member).toHaveProperty('websiteUrl', 'https://pagar.me')
 })
 
 test('the adapter must return a fulfilled member object with no address', () => {
