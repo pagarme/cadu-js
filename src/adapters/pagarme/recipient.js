@@ -14,6 +14,7 @@ const {
   of,
   path,
   pathEq,
+  pathSatisfies,
   propEq,
   pipe,
   prop,
@@ -22,8 +23,11 @@ const {
   __,
 } = require('ramda')
 
+const isNotNil = complement(isNil)
+const pathIsNotNil = pathSatisfies(isNotNil)
+const hasTradingName = pathIsNotNil(['register_information', 'trading_name'])
+
 const isIndividual = pathEq(['register_information', 'type'], 'individual')
-const hasTradeName = has(path(['register_information', 'trading_name']))
 
 const legalNameCompany = ifElse(
   isIndividual,
@@ -35,7 +39,7 @@ const tradeNameCompany = ifElse(
   isIndividual,
   path(['register_information', 'name']),
   ifElse(
-    hasTradeName,
+    hasTradingName,
     path(['register_information', 'trading_name']),
     path(['register_information', 'company_name'])
   )
@@ -110,9 +114,8 @@ const getAdresses = (recipient) => {
   return uniq(addressesArray)
 }
 
-const notNil = complement(isNil)
 const notEmpty = complement(isEmpty)
-const filterNotNil = filter(notNil)
+const filterNotNil = filter(isNotNil)
 const filterNotEmpty = filter(notEmpty)
 
 const recipient = applySpec({
