@@ -637,6 +637,7 @@ module.exports =
 	    of = _require.of,
 	    path = _require.path,
 	    pathEq = _require.pathEq,
+	    pathSatisfies = _require.pathSatisfies,
 	    propEq = _require.propEq,
 	    pipe = _require.pipe,
 	    prop = _require.prop,
@@ -644,12 +645,15 @@ module.exports =
 	    uniq = _require.uniq,
 	    __ = _require.__;
 	
+	var isNotNil = complement(isNil);
+	var pathIsNotNil = pathSatisfies(isNotNil);
+	var hasTradingName = pathIsNotNil(['register_information', 'trading_name']);
+	
 	var isIndividual = pathEq(['register_information', 'type'], 'individual');
-	var hasTradeName = has(path(['register_information', 'trading_name']));
 	
 	var legalNameCompany = ifElse(isIndividual, path(['register_information', 'name']), path(['register_information', 'company_name']));
 	
-	var tradeNameCompany = ifElse(isIndividual, path(['register_information', 'name']), ifElse(hasTradeName, path(['register_information', 'trading_name']), path(['register_information', 'company_name'])));
+	var tradeNameCompany = ifElse(isIndividual, path(['register_information', 'name']), ifElse(hasTradingName, path(['register_information', 'trading_name']), path(['register_information', 'company_name'])));
 	
 	var legalName = ifElse(has('register_information'), legalNameCompany, prop('legal_name'));
 	
@@ -693,9 +697,8 @@ module.exports =
 	  return uniq(addressesArray);
 	};
 	
-	var notNil = complement(isNil);
 	var notEmpty = complement(isEmpty);
-	var filterNotNil = filter(notNil);
+	var filterNotNil = filter(isNotNil);
 	var filterNotEmpty = filter(notEmpty);
 	
 	var recipient = applySpec({
