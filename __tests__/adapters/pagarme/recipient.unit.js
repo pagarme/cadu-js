@@ -42,7 +42,6 @@ const companyRecipient = {
         street: 'outra rua',
         street_number: '241',
         zipcode: '04571020',
-        complementary: 'foo complemento',
         state: 'SP',
         city: 'foo cidade',
       }],
@@ -312,7 +311,7 @@ const individualRecipient = {
       street: 'Rua Doutor Télio Barreto',
       street_number: '240',
       zipcode: '04571020',
-      complementary: 'Apt 202',
+      complementary: 'SALAO DE USO COMERCIAL N 517, NO 5 PISO DO SHOPPING CENTER PIRA CICABA',
       state: 'RJ',
       city: 'Macaé',
     },
@@ -553,7 +552,7 @@ test('the adapter must return a fulfilled adresses array object for a company re
   expect(address3).toHaveProperty('streetName', 'outra rua')
   expect(address3).toHaveProperty('entranceNumber', '241')
   expect(address3).toHaveProperty('neighborhood', 'foo bairro')
-  expect(address3).toHaveProperty('complement', 'foo complemento')
+  expect(address3).toHaveProperty('complement', undefined)
   expect(address3).toHaveProperty('cityName', 'foo cidade')
   expect(address3).toHaveProperty('countrySubdivisionCode', 'SP')
   expect(address3).toHaveProperty('countryId', 76)
@@ -606,7 +605,7 @@ test('the adapter must return a fulfilled adresses array object for a individual
   expect(address).toHaveProperty('streetName', 'Rua Doutor Télio Barreto')
   expect(address).toHaveProperty('entranceNumber', '240')
   expect(address).toHaveProperty('neighborhood', 'Miramar')
-  expect(address).toHaveProperty('complement', 'Apt 202')
+  expect(address).toHaveProperty('complement', 'SALAO DE USO COMERCIAL N 517, NO 5 PISO DO SHOPPING CENTER PIRA')
   expect(address).toHaveProperty('cityName', 'Macaé')
   expect(address).toHaveProperty('countrySubdivisionCode', 'RJ')
   expect(address).toHaveProperty('countryId', 76)
