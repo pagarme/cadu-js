@@ -11,7 +11,7 @@ const companyRecipient = {
     type: 'corporation',
     document_number: '43633675456',
     company_name: 'Full Name Company',
-    trading_name: 'Company Trading Name',
+    trading_name: 'Com\\pany Tra||ding Nam\ne',
     cnae: '9999-9/99',
     phone_numbers: [Object],
     corporation_type: 'ltda',
