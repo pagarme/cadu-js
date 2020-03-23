@@ -6,6 +6,7 @@ const {
   anyPass,
   applySpec,
   complement,
+  evolve,
   filter,
   has,
   ifElse,
@@ -19,6 +20,7 @@ const {
   pipe,
   prop,
   reject,
+  replace,
   uniq,
   __,
 } = require('ramda')
@@ -133,9 +135,18 @@ const recipient = applySpec({
 
 const rejectNullOrEmpty = reject(isNil)
 
+const caduUnsafeCharsReg = /[\\|\n]/g
+const replaceUnsafeChars = replace(caduUnsafeCharsReg, '')
+
+const parseRecipient = evolve({
+  legalName: replaceUnsafeChars,
+  tradeName: replaceUnsafeChars,
+})
+
 module.exports = pipe(
   rejectNullOrEmpty,
   recipient,
   filterNotEmpty,
-  filterNotNil
+  filterNotNil,
+  parseRecipient
 )

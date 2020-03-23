@@ -2,10 +2,10 @@ const addressAdapter = require('../../../src/adapters/pagarme/address')
 
 const addressMock = {
   neighborhood: 'bairro',
-  street: 'rua',
-  street_number: '240',
+  street: '  rua  ',
+  street_number: '240   ',
   zipcode: '04571020',
-  complementary: 'complemento',
+  complementary: 'complemento ',
   state: 'PA',
   city: 'Belém',
 }
