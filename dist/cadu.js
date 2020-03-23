@@ -629,6 +629,7 @@ module.exports =
 	    anyPass = _require.anyPass,
 	    applySpec = _require.applySpec,
 	    complement = _require.complement,
+	    evolve = _require.evolve,
 	    filter = _require.filter,
 	    has = _require.has,
 	    ifElse = _require.ifElse,
@@ -642,6 +643,7 @@ module.exports =
 	    pipe = _require.pipe,
 	    prop = _require.prop,
 	    reject = _require.reject,
+	    replace = _require.replace,
 	    uniq = _require.uniq,
 	    __ = _require.__;
 	
@@ -716,7 +718,15 @@ module.exports =
 	
 	var rejectNullOrEmpty = reject(isNil);
 	
-	module.exports = pipe(rejectNullOrEmpty, recipient, filterNotEmpty, filterNotNil);
+	var caduUnsafeCharsReg = /[\\|\n]/g;
+	var replaceUnsafeChars = replace(caduUnsafeCharsReg, '');
+	
+	var parseRecipient = evolve({
+	  legalName: replaceUnsafeChars,
+	  tradeName: replaceUnsafeChars
+	});
+	
+	module.exports = pipe(rejectNullOrEmpty, recipient, filterNotEmpty, filterNotNil, parseRecipient);
 
 /***/ },
 /* 23 */
@@ -753,19 +763,32 @@ module.exports =
 	'use strict';
 	
 	var _require = __webpack_require__(9),
+	    always = _require.always,
 	    applySpec = _require.applySpec,
+	    is = _require.is,
+	    pipe = _require.pipe,
 	    prop = _require.prop,
-	    always = _require.always;
+	    slice = _require.slice,
+	    trim = _require.trim,
+	    when = _require.when;
+	
+	var isString = is(String);
+	
+	var propAndTrim = function propAndTrim(propName) {
+	  return pipe(prop(propName), when(isString, trim));
+	};
+	
+	var complement = pipe(propAndTrim('complementary'), when(isString, slice(0, 63)));
 	
 	var adapter = applySpec({
 	  typeId: always(2),
-	  streetName: prop('street'),
-	  entranceNumber: prop('street_number'),
-	  neighborhood: prop('neighborhood'),
-	  postalCode: prop('zipcode'),
-	  complement: prop('complementary'),
-	  cityName: prop('city'),
-	  countrySubdivisionCode: prop('state'),
+	  streetName: propAndTrim('street'),
+	  entranceNumber: propAndTrim('street_number'),
+	  neighborhood: propAndTrim('neighborhood'),
+	  postalCode: propAndTrim('zipcode'),
+	  complement: complement,
+	  cityName: propAndTrim('city'),
+	  countrySubdivisionCode: propAndTrim('state'),
 	  countryId: always(76)
 	});
 	
