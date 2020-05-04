@@ -1,7 +1,10 @@
 const {
   always,
+  anyPass,
   applySpec,
   is,
+  isEmpty,
+  isNil,
   pipe,
   prop,
   slice,
@@ -21,10 +24,18 @@ const complement = pipe(
   when(isString, slice(0, 63))
 )
 
+const isEmptyOrNil = anyPass([isEmpty, isNil])
+const emptyStreetNumber = always('SN')
+
+const entranceNumber = pipe(
+  propAndTrim('street_number'),
+  when(isEmptyOrNil, emptyStreetNumber)
+)
+
 const adapter = applySpec({
   typeId: always(2),
   streetName: propAndTrim('street'),
-  entranceNumber: propAndTrim('street_number'),
+  entranceNumber,
   neighborhood: propAndTrim('neighborhood'),
   postalCode: propAndTrim('zipcode'),
   complement,
