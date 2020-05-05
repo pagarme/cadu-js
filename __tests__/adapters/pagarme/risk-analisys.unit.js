@@ -120,7 +120,7 @@ const corporationRecipient = {
   },
 }
 
-test('the adapter must return a fulfilled adress object', () => {
+test('the adapter must return a fulfilled address object', () => {
   const riskAnalysis = riskAnalysisAdapter({
     recipient: individualRecipient
   })
