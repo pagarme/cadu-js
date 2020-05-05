@@ -1,6 +1,6 @@
 {
   "name": "cadu",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A JavaScript library to interface with CADU",
   "main": "src/client.js",
   "unpkg": "dist/cadu.min.js",
