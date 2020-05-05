@@ -677,7 +677,7 @@ module.exports =
 	
 	var hasAddress = anyPass([path(['register_information', 'address']), path(['register_information', 'addresses']), path(['register_information', 'main_address'])]);
 	
-	var getAdresses = function getAdresses(recipient) {
+	var getAddresses = function getAddresses(recipient) {
 	  var addressesArray = [];
 	
 	  if (hasAddress(recipient)) {
@@ -712,7 +712,7 @@ module.exports =
 	  birthdate: birthdate,
 	  motherName: path(['register_information', 'mother_name']),
 	  bankAccounts: bankAccounts,
-	  addresses: getAdresses,
+	  addresses: getAddresses,
 	  websiteUrl: path(['register_information', 'site_url'])
 	});
 	
@@ -764,8 +764,11 @@ module.exports =
 	
 	var _require = __webpack_require__(9),
 	    always = _require.always,
+	    anyPass = _require.anyPass,
 	    applySpec = _require.applySpec,
 	    is = _require.is,
+	    isEmpty = _require.isEmpty,
+	    isNil = _require.isNil,
 	    pipe = _require.pipe,
 	    prop = _require.prop,
 	    slice = _require.slice,
@@ -780,10 +783,15 @@ module.exports =
 	
 	var complement = pipe(propAndTrim('complementary'), when(isString, slice(0, 63)));
 	
+	var isEmptyOrNil = anyPass([isEmpty, isNil]);
+	var emptyStreetNumber = always('SN');
+	
+	var entranceNumber = pipe(propAndTrim('street_number'), when(isEmptyOrNil, emptyStreetNumber));
+	
 	var adapter = applySpec({
 	  typeId: always(2),
 	  streetName: propAndTrim('street'),
-	  entranceNumber: propAndTrim('street_number'),
+	  entranceNumber: entranceNumber,
 	  neighborhood: propAndTrim('neighborhood'),
 	  postalCode: propAndTrim('zipcode'),
 	  complement: complement,
