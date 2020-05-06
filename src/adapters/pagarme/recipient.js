@@ -95,7 +95,7 @@ const hasAddress = anyPass([
   path(['register_information', 'main_address']),
 ])
 
-const getAdresses = (recipient) => {
+const getAddresses = (recipient) => {
   let addressesArray = []
 
   if (hasAddress(recipient)) {
@@ -129,7 +129,7 @@ const recipient = applySpec({
   birthdate,
   motherName: path(['register_information', 'mother_name']),
   bankAccounts,
-  addresses: getAdresses,
+  addresses: getAddresses,
   websiteUrl: path(['register_information', 'site_url']),
 })
 

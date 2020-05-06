@@ -120,9 +120,9 @@ const corporationRecipient = {
   },
 }
 
-test('the adapter must return a fulfilled adress object', () => {
+test('the adapter must return a fulfilled address object', () => {
   const riskAnalysis = riskAnalysisAdapter({
-    recipient: individualRecipient
+    recipient: individualRecipient,
   })
 
   expect(riskAnalysis).toHaveProperty('policies')
@@ -153,7 +153,7 @@ test('the adapter must return a fulfilled adress object', () => {
 test('the adapter must return a fulfilled document_number object', () => {
   const riskAnalysis =
     riskAnalysisAdapter({
-      recipient: individualRecipientWithoutBankAccount
+      recipient: individualRecipientWithoutBankAccount,
     })
 
   expect(riskAnalysis).toHaveProperty('policies')
@@ -180,7 +180,7 @@ test('the adapter must return a fulfilled document_number object', () => {
 
 test('the adapter must return policy id 5 for corporations', () => {
   const riskAnalysis = riskAnalysisAdapter({
-    recipient: corporationRecipient
+    recipient: corporationRecipient,
   })
 
   expect(riskAnalysis).toHaveProperty('policies')
@@ -196,7 +196,7 @@ test('the adapter must return the chosen policy id', () => {
   const customPolicyId = 42
   const riskAnalysis = riskAnalysisAdapter({
     recipient: individualRecipient,
-    policyId: customPolicyId
+    policyId: customPolicyId,
   })
 
   expect(riskAnalysis).toHaveProperty('policies')
