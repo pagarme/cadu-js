@@ -120,9 +120,13 @@ const notEmpty = complement(isEmpty)
 const filterNotNil = filter(isNotNil)
 const filterNotEmpty = filter(notEmpty)
 
+const maxLegalOrTradeNameLength = 100
+const truncateName = name =>
+  name && name.substring(0, maxLegalOrTradeNameLength)
+
 const recipient = applySpec({
-  legalName,
-  tradeName,
+  legalName: pipe(legalName, truncateName),
+  tradeName: pipe(tradeName, truncateName),
   taxId,
   legalPersonalityId: personCode,
   taxIdTypeId: personCode,
