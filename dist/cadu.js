@@ -703,9 +703,14 @@ module.exports =
 	var filterNotNil = filter(isNotNil);
 	var filterNotEmpty = filter(notEmpty);
 	
+	var maxLegalOrTradeNameLength = 100;
+	var truncateName = function truncateName(name) {
+	  return name && name.substring(0, maxLegalOrTradeNameLength);
+	};
+	
 	var recipient = applySpec({
-	  legalName: legalName,
-	  tradeName: tradeName,
+	  legalName: pipe(legalName, truncateName),
+	  tradeName: pipe(tradeName, truncateName),
 	  taxId: taxId,
 	  legalPersonalityId: personCode,
 	  taxIdTypeId: personCode,

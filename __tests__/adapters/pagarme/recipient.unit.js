@@ -1,4 +1,5 @@
 const recipientAdapter = require('../../../src/adapters/pagarme/recipient')
+const { mergeDeepRight } = require('ramda')
 
 const companyRecipient = {
   id: 're_cj8uhzne9000v01pe9westv13',
@@ -667,4 +668,58 @@ test('the adapter must return a fulfilled member object with only main address',
   expect(member).toHaveProperty('bankAccounts')
   expect(member).toHaveProperty('addresses')
   expect(member.addresses).toHaveLength(1)
+})
+
+test('the adapter must return a fulfilled member object with legal name with a maximum of 100 caracteres', () => {
+  const companyRecipientWithLongCompanyName = mergeDeepRight(
+    companyRecipientWithoutTradingName,
+    {
+      register_information: {
+        company_name: 'LONG COMPANY NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTACAO LTDA',
+      },
+    }
+  )
+  const member = recipientAdapter(companyRecipientWithLongCompanyName)
+
+  expect(member).toHaveProperty('legalName', 'LONG COMPANY NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTAC')
+  expect(member).toHaveProperty('tradeName', 'LONG COMPANY NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTAC')
+})
+
+
+test('the adapter must return a fulfilled member object with legal name and trade name with a maximum of 100 caracteres', () => {
+  const companyRecipientWithLongTradingName = mergeDeepRight(companyRecipient, {
+    register_information: {
+      company_name: 'LONG COMPANY NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTACAO LTDA',
+      trading_name: 'LONG TRADE NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTACAO LTDA',
+    },
+  })
+  const member = recipientAdapter(companyRecipientWithLongTradingName)
+
+  expect(member).toHaveProperty('legalName', 'LONG COMPANY NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTAC')
+  expect(member).toHaveProperty('tradeName', 'LONG TRADE NAME DO BRASIL INDUSTRIA E COMERCIO DE BICICLETA ELETRICA SCOOTER EXPORTACAO E IMPORTACAO')
+})
+
+test('the adapter must return a fulfilled member object with legal name and trade name with a maximum of 100 caracteres when recipient is individual', () => {
+  const companyRecipientWithLongName = mergeDeepRight(individualRecipient, {
+    register_information: {
+      name: 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonzaga Pascoal Cipriano Serafim',
+    },
+  })
+  const member = recipientAdapter(companyRecipientWithLongName)
+
+  expect(member).toHaveProperty('legalName', 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonz')
+  expect(member).toHaveProperty('tradeName', 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonz')
+})
+
+test('the adapter must return a fulfilled member object with legal name and trade name with a maximum of 100 caracteres with no register information', () => {
+  const companyRecipientWithLongName = mergeDeepRight(
+    recipientWithoutRegisterInformation,
+    {
+      legal_name: 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonzaga Pascoal Cipriano Serafim',
+    }
+  )
+  const member = recipientAdapter(companyRecipientWithLongName)
+
+  expect(member).toHaveProperty('legalName', 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonz')
+  expect(member).toHaveProperty('tradeName', 'Pedro de Alcântara Francisco António João Carlos Xavier de Paula Miguel Rafael Joaquim Henrique Gonz')
 })
