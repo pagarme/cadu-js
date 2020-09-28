@@ -825,6 +825,7 @@ module.exports =
 	    pathEq = _require.pathEq,
 	    pipe = _require.pipe,
 	    prop = _require.prop,
+	    propOr = _require.propOr,
 	    T = _require.T;
 	
 	var isIndividual = pathEq(['recipient', 'document_type'], 'cpf');
@@ -833,7 +834,7 @@ module.exports =
 	
 	var createPolicy = applySpec({
 	  id: getPolicyId,
-	  forceReanalysis: always(false)
+	  forceReanalysis: propOr(false, 'forceReanalysis')
 	});
 	
 	var serviceAgreements = [{
