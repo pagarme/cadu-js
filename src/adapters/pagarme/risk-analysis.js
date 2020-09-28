@@ -9,6 +9,7 @@ const {
   pathEq,
   pipe,
   prop,
+  propOr,
   T,
 } = require('ramda')
 
@@ -22,7 +23,7 @@ const getPolicyId = cond([
 
 const createPolicy = applySpec({
   id: getPolicyId,
-  forceReanalysis: always(false),
+  forceReanalysis: propOr(false, 'forceReanalysis'),
 })
 
 const serviceAgreements = [{

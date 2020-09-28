@@ -205,3 +205,15 @@ test('the adapter must return the chosen policy id', () => {
   expect(riskAnalysis.policies[0]).toHaveProperty('id', customPolicyId)
   expect(riskAnalysis.policies[0]).toHaveProperty('forceReanalysis', false)
 })
+
+test('the adapter must return forceReanalysis as true', () => {
+  const riskAnalysis = riskAnalysisAdapter({
+    recipient: corporationRecipient,
+    forceReanalysis: true,
+  })
+
+  expect(riskAnalysis).toHaveProperty('policies')
+
+  expect(riskAnalysis.policies).toHaveLength(1)
+  expect(riskAnalysis.policies[0]).toHaveProperty('forceReanalysis', true)
+})
