@@ -20,7 +20,9 @@ const {
   countryRoutes,
   economicActivitiesRoutes,
   analysisRoutes,
+  kycProxyAnalysisRoutes,
 } = require('./routes')
+
 const adapters = require('./adapters')
 
 const {
@@ -33,6 +35,12 @@ const chooseHost = ifElse(
   equals('live'),
   always('https://api-cadu.stone.com.br'),
   always('https://api-sandbox-cadu.stone.com.br')
+)
+
+const chooseHostKycProxy = ifElse(
+  equals('live'),
+  always('https://kyc-proxy.risco.pagar.me'),
+  always('https://kyc-proxy.stg.risco.pagar.me')
 )
 
 const connect = (config = {}) => {
@@ -72,7 +80,36 @@ const connect = (config = {}) => {
   return assoc('adapters', adapters, library)
 }
 
+const connectKycProxy = (config = {}) => {
+  validateConfig(config)
+
+  const {
+    environment,
+    secret,
+    clientApplicationKey,
+    userIdentifier,
+  } = config
+
+  const library = mappersmith({
+    middlewares: [
+      encodeJson,
+      headerAuth({
+        secret,
+        clientApplicationKey,
+        userIdentifier,
+      }),
+    ],
+    host: chooseHostKycProxy(environment),
+    resources: {
+      Analysis: kycProxyAnalysisRoutes,
+    },
+  })
+
+  return assoc('adapters', adapters, library)
+}
+
 module.exports = {
+  connectKycProxy,
   connect,
   adapters,
 }
