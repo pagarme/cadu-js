@@ -72,16 +72,19 @@ module.exports =
 	    phoneRoutes = _require4.phoneRoutes,
 	    countryRoutes = _require4.countryRoutes,
 	    economicActivitiesRoutes = _require4.economicActivitiesRoutes,
-	    analysisRoutes = _require4.analysisRoutes;
+	    analysisRoutes = _require4.analysisRoutes,
+	    kycProxyAnalysisRoutes = _require4.kycProxyAnalysisRoutes;
 	
-	var adapters = __webpack_require__(21);
+	var adapters = __webpack_require__(22);
 	
-	var _require5 = __webpack_require__(26),
+	var _require5 = __webpack_require__(27),
 	    validateConfig = _require5.validateConfig;
 	
-	configs.Promise = __webpack_require__(28);
+	configs.Promise = __webpack_require__(29);
 	
 	var chooseHost = ifElse(equals('live'), always('https://api-cadu.stone.com.br'), always('https://api-sandbox-cadu.stone.com.br'));
+	
+	var chooseHostKycProxy = ifElse(equals('live'), always('https://kyc-proxy.risco.pagar.me'), always('https://kyc-proxy.stg.risco.pagar.me'));
 	
 	var connect = function connect() {
 	  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -118,7 +121,34 @@ module.exports =
 	  return assoc('adapters', adapters, library);
 	};
 	
+	var connectKycProxy = function connectKycProxy() {
+	  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	
+	  validateConfig(config);
+	
+	  var environment = config.environment,
+	      secret = config.secret,
+	      clientApplicationKey = config.clientApplicationKey,
+	      userIdentifier = config.userIdentifier;
+	
+	
+	  var library = mappersmith({
+	    middlewares: [encodeJson, headerAuth({
+	      secret: secret,
+	      clientApplicationKey: clientApplicationKey,
+	      userIdentifier: userIdentifier
+	    })],
+	    host: chooseHostKycProxy(environment),
+	    resources: {
+	      Analysis: kycProxyAnalysisRoutes
+	    }
+	  });
+	
+	  return assoc('adapters', adapters, library);
+	};
+	
 	module.exports = {
+	  connectKycProxy: connectKycProxy,
 	  connect: connect,
 	  adapters: adapters
 	};
@@ -256,6 +286,7 @@ module.exports =
 	var countryRoutes = __webpack_require__(18);
 	var economicActivitiesRoutes = __webpack_require__(19);
 	var analysisRoutes = __webpack_require__(20);
+	var kycProxyAnalysisRoutes = __webpack_require__(21);
 	
 	module.exports = {
 	  memberRoutes: memberRoutes,
@@ -267,7 +298,8 @@ module.exports =
 	  phoneRoutes: phoneRoutes,
 	  countryRoutes: countryRoutes,
 	  economicActivitiesRoutes: economicActivitiesRoutes,
-	  analysisRoutes: analysisRoutes
+	  analysisRoutes: analysisRoutes,
+	  kycProxyAnalysisRoutes: kycProxyAnalysisRoutes
 	};
 
 /***/ },
@@ -596,14 +628,34 @@ module.exports =
 
 /***/ },
 /* 21 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var riskAPI = '/risk/v1/members';
+	
+	module.exports = {
+	  byId: {
+	    method: 'get',
+	    path: riskAPI + '/{memberKey}/analyses/{analysisKey}'
+	  },
+	
+	  create: {
+	    method: 'post',
+	    path: riskAPI + '/{memberKey}/analyses'
+	  }
+	};
+
+/***/ },
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var pagarmeRecipientAdapter = __webpack_require__(22);
-	var pagarmeBankAccountAdapter = __webpack_require__(23);
-	var pagarmeAddressAdapter = __webpack_require__(24);
-	var pagarmeRiskAnalysisAdapter = __webpack_require__(25);
+	var pagarmeRecipientAdapter = __webpack_require__(23);
+	var pagarmeBankAccountAdapter = __webpack_require__(24);
+	var pagarmeAddressAdapter = __webpack_require__(25);
+	var pagarmeRiskAnalysisAdapter = __webpack_require__(26);
 	
 	module.exports = {
 	  pagarme: {
@@ -615,14 +667,14 @@ module.exports =
 	};
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var moment = __webpack_require__(8);
-	var bankAccountAdapter = __webpack_require__(23);
-	var addressAdapter = __webpack_require__(24);
+	var bankAccountAdapter = __webpack_require__(24);
+	var addressAdapter = __webpack_require__(25);
 	
 	var _require = __webpack_require__(9),
 	    always = _require.always,
@@ -734,7 +786,7 @@ module.exports =
 	module.exports = pipe(rejectNullOrEmpty, recipient, filterNotEmpty, filterNotNil, parseRecipient);
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -762,7 +814,7 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -808,12 +860,12 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var recipientAdapter = __webpack_require__(22);
+	var recipientAdapter = __webpack_require__(23);
 	
 	var _require = __webpack_require__(9),
 	    always = _require.always,
@@ -856,7 +908,7 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -865,7 +917,7 @@ module.exports =
 	    pluck = _require.pluck,
 	    isNil = _require.isNil;
 	
-	var Joi = __webpack_require__(27);
+	var Joi = __webpack_require__(28);
 	
 	var configSchema = Joi.object().keys({
 	  secret: Joi.string().required(),
@@ -887,13 +939,13 @@ module.exports =
 	};
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	module.exports = require("joi");
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	module.exports = require("bluebird");
