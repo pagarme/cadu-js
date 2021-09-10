@@ -14,6 +14,11 @@ describe('Create client', () => {
       .toThrow()
   })
 
+  test('when try connectKycProxy without config', () => {
+    expect(() => cadujs.connectKycProxy())
+      .toThrow()
+  })
+
   test("when try connect without 'clientApplicationKey'", () => {
     expect(() => cadujs.connect({
       environment: 'sandbox',
@@ -52,6 +57,17 @@ describe('Create client', () => {
 
   test('when try connect with correct values', () => {
     const client = cadujs.connect({
+      environment: 'sandbox',
+      clientApplicationKey: '1234-1234-1234',
+      secret: '1234',
+      userIdentifier: 'test@pagar.me',
+    })
+
+    expect(client).toBeInstanceOf(Object)
+  })
+
+  test('when try connectKycProxy with correct values', () => {
+    const client = cadujs.connectKycProxy({
       environment: 'sandbox',
       clientApplicationKey: '1234-1234-1234',
       secret: '1234',

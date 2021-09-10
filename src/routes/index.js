@@ -8,6 +8,7 @@ const phoneRoutes = require('./member/phone')
 const countryRoutes = require('./others/country')
 const economicActivitiesRoutes = require('./others/economic-activities')
 const analysisRoutes = require('./risk/analysis')
+const kycProxyAnalysisRoutes = require('./kyc-proxy/analysis')
 
 module.exports = {
   memberRoutes,
@@ -20,4 +21,5 @@ module.exports = {
   countryRoutes,
   economicActivitiesRoutes,
   analysisRoutes,
+  kycProxyAnalysisRoutes,
 }
