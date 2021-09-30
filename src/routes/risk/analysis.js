@@ -1,18 +1,18 @@
-const riskAPI = '/risk/v1/members'
+const riskAPI = '/risk/v2/members/analyses'
 
 module.exports = {
   all: {
     method: 'get',
-    path: `${riskAPI}/{memberKey}/analyses`,
+    path: `${riskAPI}`,
   },
 
   byId: {
     method: 'get',
-    path: `${riskAPI}/{memberKey}/analyses/{analysisKey}`,
+    path: `${riskAPI}/{analysisKey}`,
   },
 
   create: {
     method: 'post',
-    path: `${riskAPI}/{memberKey}/analyses`,
+    path: `${riskAPI}`,
   },
 }
