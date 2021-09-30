@@ -12,6 +12,7 @@ const {
 
 const createAuthorization = (request, config) => {
   const {
+    environment,
     secret,
     clientApplicationKey,
     userIdentifier,
@@ -20,7 +21,9 @@ const createAuthorization = (request, config) => {
   const schema = 'CADU'
   const timestamp = moment().utc().unix()
   const method = request.method()
-  const cleanUrl = replace(/\?.+/g, '', request.url())
+  const host = environment === 'live' ? 'https://api-cadu.stone.com.br' : 'https://api-sandbox-cadu.stone.com.br'
+  const url = `${host}${request.path()}`
+  const cleanUrl = replace(/\?.+/g, '', url)
 
   const macValues = [
     toLower(schema),

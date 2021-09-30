@@ -57,6 +57,7 @@ const connect = (config = {}) => {
     middlewares: [
       encodeJson,
       headerAuth({
+        environment,
         secret,
         clientApplicationKey,
         userIdentifier,
@@ -94,6 +95,7 @@ const connectKycProxy = (config = {}) => {
     middlewares: [
       encodeJson,
       headerAuth({
+        environment,
         secret,
         clientApplicationKey,
         userIdentifier,

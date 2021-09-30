@@ -1,21 +1,22 @@
 const headerAuth = require('../../src/middlewares/header-auth')
-const { always, identity, path } = require('ramda')
+const { always, identity, pathOr } = require('ramda')
 
-const caduUrl = 'https://api-sandbox-cadu.stone.com.br/membership/v1/members'
+const caduPath = '/membership/v1/members'
 const method = jest.fn()
   .mockImplementationOnce(always('post'))
   .mockImplementationOnce(always('get'))
 
-const url = jest.fn(always(caduUrl))
 const enhance = jest.fn(identity)
+const path = jest.fn(always(caduPath))
 
 const request = {
   method,
-  url,
   enhance,
+  path,
 }
 
 const authConfig = {
+  environment:'sandbox',
   secret: '1234',
   clientApplicationKey: '1234-1234-1234',
   userIdentifier: 'test@pagar.me',
@@ -51,7 +52,7 @@ describe('HeaderAuth', () => {
     }
 
     const header = headerAuth(authConfig)().request(request)
-    const userIdentifier = path('headers', 'User-Identifier', header)
+    const userIdentifier = pathOr(undefined, ['headers', 'User-Identifier'], header)
 
     expect(header).toBeInstanceOf(Object)
     expect(userIdentifier).toBeUndefined()
