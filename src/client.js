@@ -1,6 +1,7 @@
 const { default: mappersmith, configs } = require('mappersmith')
 const { default: encodeJson } = require('mappersmith/middlewares/encode-json')
 const headerAuth = require('./middlewares/header-auth')
+const headerAuthKycProxy = require('./middlewares/header-auth-kyc-proxy')
 
 const {
   always,
@@ -93,7 +94,8 @@ const connectKycProxy = (config = {}) => {
   const library = mappersmith({
     middlewares: [
       encodeJson,
-      headerAuth({
+      headerAuthKycProxy({
+        environment,
         secret,
         clientApplicationKey,
         userIdentifier,
