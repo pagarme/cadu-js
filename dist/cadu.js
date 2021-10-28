@@ -48,13 +48,14 @@ module.exports =
 	'use strict';
 	
 	var _require = __webpack_require__(1),
-	    mappersmith = _require.default,
-	    configs = _require.configs;
+	    encodeJson = _require.default;
 	
-	var _require2 = __webpack_require__(2),
-	    encodeJson = _require2.default;
+	var headerAuthPandaMiddleware = __webpack_require__(2);
+	var buildGetJwtToken = __webpack_require__(3);
+	var forge = __webpack_require__(10).default;
 	
-	var headerAuth = __webpack_require__(3);
+	var _require2 = __webpack_require__(10),
+	    configs = _require2.configs;
 	
 	var _require3 = __webpack_require__(9),
 	    always = _require3.always,
@@ -62,7 +63,7 @@ module.exports =
 	    ifElse = _require3.ifElse,
 	    assoc = _require3.assoc;
 	
-	var _require4 = __webpack_require__(10),
+	var _require4 = __webpack_require__(11),
 	    memberRoutes = _require4.memberRoutes,
 	    contactRoutes = _require4.contactRoutes,
 	    bankAccountRoutes = _require4.bankAccountRoutes,
@@ -75,34 +76,42 @@ module.exports =
 	    analysisRoutes = _require4.analysisRoutes,
 	    kycProxyAnalysisRoutes = _require4.kycProxyAnalysisRoutes;
 	
-	var adapters = __webpack_require__(22);
+	var adapters = __webpack_require__(23);
 	
-	var _require5 = __webpack_require__(27),
-	    validateConfig = _require5.validateConfig;
+	var _require5 = __webpack_require__(28),
+	    validateConfig = _require5.validateConfig,
+	    validateConnectConfig = _require5.validateConnectConfig;
 	
-	configs.Promise = __webpack_require__(29);
+	configs.Promise = __webpack_require__(30);
 	
-	var chooseHost = ifElse(equals('live'), always('https://api-cadu.stone.com.br'), always('https://api-sandbox-cadu.stone.com.br'));
+	configs.maxMiddlewareStackExecutionAllowed = 2;
+	
+	var chooseHost = ifElse(equals('live'), always('https://api-cadu.stone.com.br'), always('https://api-staging-cadu.stone.com.br'));
 	
 	var chooseHostKycProxy = ifElse(equals('live'), always('https://kyc-proxy.risco.pagar.me'), always('https://kyc-proxy.stg.risco.pagar.me'));
 	
 	var connect = function connect() {
 	  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
-	  validateConfig(config);
+	  validateConnectConfig(config);
 	
 	  var environment = config.environment,
-	      secret = config.secret,
-	      clientApplicationKey = config.clientApplicationKey,
-	      userIdentifier = config.userIdentifier;
+	      privateKey = config.privateKey,
+	      clientId = config.clientId,
+	      userAgent = config.userAgent;
 	
 	
-	  var library = mappersmith({
-	    middlewares: [encodeJson, headerAuth({
-	      secret: secret,
-	      clientApplicationKey: clientApplicationKey,
-	      userIdentifier: userIdentifier
-	    })],
+	  var getJwtToken = buildGetJwtToken({
+	    environment: environment,
+	    privateKey: privateKey,
+	    clientId: clientId,
+	    userAgent: userAgent
+	  });
+	
+	  var AuthorizationTokenHeader = headerAuthPandaMiddleware(getJwtToken);
+	
+	  var library = forge({
+	    middlewares: [AuthorizationTokenHeader, encodeJson],
 	    host: chooseHost(environment),
 	    resources: {
 	      Member: memberRoutes,
@@ -127,17 +136,22 @@ module.exports =
 	  validateConfig(config);
 	
 	  var environment = config.environment,
-	      secret = config.secret,
-	      clientApplicationKey = config.clientApplicationKey,
-	      userIdentifier = config.userIdentifier;
+	      privateKey = config.privateKey,
+	      clientId = config.clientId,
+	      userAgent = config.userAgent;
 	
 	
-	  var library = mappersmith({
-	    middlewares: [encodeJson, headerAuth({
-	      secret: secret,
-	      clientApplicationKey: clientApplicationKey,
-	      userIdentifier: userIdentifier
-	    })],
+	  var getJwtToken = buildGetJwtToken({
+	    environment: environment,
+	    privateKey: privateKey,
+	    clientId: clientId,
+	    userAgent: userAgent
+	  });
+	
+	  var AuthorizationTokenHeader = headerAuthPandaMiddleware(getJwtToken);
+	
+	  var library = forge({
+	    middlewares: [AuthorizationTokenHeader, encodeJson],
 	    host: chooseHostKycProxy(environment),
 	    resources: {
 	      Analysis: kycProxyAnalysisRoutes
@@ -157,13 +171,46 @@ module.exports =
 /* 1 */
 /***/ function(module, exports) {
 
-	module.exports = require("mappersmith");
+	module.exports = require("mappersmith/middlewares/encode-json");
 
 /***/ },
 /* 2 */
 /***/ function(module, exports) {
 
-	module.exports = require("mappersmith/middlewares/encode-json");
+	"use strict";
+	
+	var handleAuthorizationToken = function handleAuthorizationToken(getJwtToken) {
+	  return getJwtToken().then(function (jwtToken) {
+	    return jwtToken;
+	  });
+	};
+	
+	var headerAuthPandaMiddleware = function headerAuthPandaMiddleware(getJwtToken) {
+	  return function () {
+	    return {
+	      request: function request(_request) {
+	        return Promise.resolve(handleAuthorizationToken(getJwtToken)).then(function (token) {
+	          var headers = {
+	            Authorization: "Bearer " + token.value
+	          };
+	
+	          return _request.enhance({ headers: headers });
+	        });
+	      },
+	      response: function response(next, renew) {
+	        return next().catch(function (response) {
+	          if (response.status() === 401) {
+	            return renew();
+	          }
+	
+	          return next();
+	        });
+	      }
+	    };
+	  };
+	};
+	
+	module.exports = headerAuthPandaMiddleware;
 
 /***/ },
 /* 3 */
@@ -171,98 +218,122 @@ module.exports =
 
 	'use strict';
 	
-	var hmacSha256 = __webpack_require__(4);
-	var encodeBase64 = __webpack_require__(5);
-	var encodeHex = __webpack_require__(6);
-	var encodeUTF8 = __webpack_require__(7);
-	var moment = __webpack_require__(8);
+	var jwt = __webpack_require__(4);
+	var moment = __webpack_require__(5);
 	
-	var _require = __webpack_require__(9),
-	    join = _require.join,
-	    replace = _require.replace,
-	    toLower = _require.toLower,
-	    toUpper = _require.toUpper;
+	var _require = __webpack_require__(6),
+	    uuidv4 = _require.v4;
 	
-	var createAuthorization = function createAuthorization(request, config) {
-	  var secret = config.secret,
-	      clientApplicationKey = config.clientApplicationKey,
-	      userIdentifier = config.userIdentifier;
+	var axios = __webpack_require__(7);
+	var url = __webpack_require__(8);
 	
+	var _require2 = __webpack_require__(9),
+	    always = _require2.always,
+	    equals = _require2.equals,
+	    ifElse = _require2.ifElse;
 	
-	  var schema = 'CADU';
-	  var timestamp = moment().utc().unix();
-	  var method = request.method();
-	  var cleanUrl = replace(/\?.+/g, '', request.url());
+	var buildGetJwtToken = function buildGetJwtToken(_ref) {
+	  var environment = _ref.environment,
+	      privateKey = _ref.privateKey,
+	      clientId = _ref.clientId,
+	      userAgent = _ref.userAgent;
+	  var token = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 	
-	  var macValues = [toLower(schema), clientApplicationKey, toUpper(method), cleanUrl, timestamp];
+	  var jwtToken = token;
 	
-	  var macString = join('.', macValues);
+	  var chooseAudValueEndpoint = ifElse(equals('live'), always('https://accounts.openbank.stone.com.br/auth/realms/stone_bank'), always('https://sandbox-accounts.openbank.stone.com.br/auth/realms/stone_bank'));
 	
-	  var macSHA256 = hmacSha256(macString, secret);
-	  var macHex = toUpper(macSHA256.toString(encodeHex));
-	  var macUTF8 = encodeUTF8.parse(macHex);
-	  var macBase64 = encodeBase64.stringify(macUTF8);
+	  var chooseRequestTokenEndpoint = ifElse(equals('live'), always('https://accounts.openbank.stone.com.br/auth/realms/stone_bank/protocol/openid-connect/token'), always('https://sandbox-accounts.openbank.stone.com.br/auth/realms/stone_bank/protocol/openid-connect/token'));
 	
-	  var id = 'id="' + clientApplicationKey + '",';
-	  var ts = 'ts="' + timestamp + '",';
-	  var mac = 'mac="' + macBase64 + '"';
+	  var getToken = function getToken() {
+	    var isTokenValid = jwtToken && jwtToken.value && jwtToken.expirationDate && jwtToken.expirationDate >= moment().unix();
 	
-	  var authorizationValues = [schema, id, ts, mac];
+	    if (isTokenValid) {
+	      return Promise.resolve(jwtToken);
+	    }
 	
-	  var Authorization = join(' ', authorizationValues);
+	    var now = moment().unix();
+	    var expirationDate = now + 15 * 60;
 	
-	  var header = { Authorization: Authorization };
-	
-	  if (method !== 'get') {
-	    header['User-Identifier'] = userIdentifier;
-	  }
-	
-	  return header;
-	};
-	
-	var HeaderAuth = function HeaderAuth(authConfig) {
-	  return function () {
-	    return {
-	      request: function request(_request) {
-	        return _request.enhance({
-	          headers: createAuthorization(_request, authConfig)
-	        });
-	      }
+	    var payload = {
+	      exp: expirationDate,
+	      nbf: now,
+	      aud: chooseAudValueEndpoint(environment),
+	      realm: 'stone_bank',
+	      sub: clientId,
+	      clientId: clientId,
+	      jti: uuidv4(),
+	      iat: now,
+	      iss: clientId
 	    };
+	
+	    try {
+	      var internalToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+	
+	      var tokenPayload = {
+	        client_id: clientId,
+	        grant_type: 'client_credentials',
+	        client_assertion: internalToken,
+	        client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'
+	      };
+	
+	      var endpoint = chooseRequestTokenEndpoint(environment);
+	      var params = new url.URLSearchParams(tokenPayload);
+	
+	      return axios.post(endpoint, params, {
+	        method: 'POST',
+	        headers: {
+	          'Content-Type': 'application/x-www-form-urlencoded',
+	          'User-Agent': userAgent
+	        }
+	      }).then(function (response) {
+	        jwtToken = {
+	          value: response.data.access_token,
+	          expirationDate: expirationDate
+	        };
+	        return jwtToken;
+	      }).catch(function (errorResponse) {
+	        throw new Error('Unsuccessful request - ' + errorResponse);
+	      });
+	    } catch (error) {
+	      throw new Error('Could not generate new token - ' + error);
+	    }
 	  };
+	
+	  return getToken;
 	};
 	
-	module.exports = HeaderAuth;
+	module.exports = buildGetJwtToken;
 
 /***/ },
 /* 4 */
 /***/ function(module, exports) {
 
-	module.exports = require("crypto-js/hmac-sha256");
+	module.exports = require("jsonwebtoken");
 
 /***/ },
 /* 5 */
 /***/ function(module, exports) {
 
-	module.exports = require("crypto-js/enc-base64");
+	module.exports = require("moment");
 
 /***/ },
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = require("crypto-js/enc-hex");
+	module.exports = require("uuid");
 
 /***/ },
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = require("crypto-js/enc-utf8");
+	module.exports = require("axios");
 
 /***/ },
 /* 8 */
 /***/ function(module, exports) {
 
-	module.exports = require("moment");
+	module.exports = require("url");
 
 /***/ },
 /* 9 */
@@ -272,21 +343,27 @@ module.exports =
 
 /***/ },
 /* 10 */
+/***/ function(module, exports) {
+
+	module.exports = require("mappersmith");
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var memberRoutes = __webpack_require__(11);
-	var contactRoutes = __webpack_require__(12);
-	var bankAccountRoutes = __webpack_require__(13);
-	var emailRoutes = __webpack_require__(14);
-	var addressRoutes = __webpack_require__(15);
-	var partnerRoutes = __webpack_require__(16);
-	var phoneRoutes = __webpack_require__(17);
-	var countryRoutes = __webpack_require__(18);
-	var economicActivitiesRoutes = __webpack_require__(19);
-	var analysisRoutes = __webpack_require__(20);
-	var kycProxyAnalysisRoutes = __webpack_require__(21);
+	var memberRoutes = __webpack_require__(12);
+	var contactRoutes = __webpack_require__(13);
+	var bankAccountRoutes = __webpack_require__(14);
+	var emailRoutes = __webpack_require__(15);
+	var addressRoutes = __webpack_require__(16);
+	var partnerRoutes = __webpack_require__(17);
+	var phoneRoutes = __webpack_require__(18);
+	var countryRoutes = __webpack_require__(19);
+	var economicActivitiesRoutes = __webpack_require__(20);
+	var analysisRoutes = __webpack_require__(21);
+	var kycProxyAnalysisRoutes = __webpack_require__(22);
 	
 	module.exports = {
 	  memberRoutes: memberRoutes,
@@ -303,36 +380,6 @@ module.exports =
 	};
 
 /***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var memberAPI = '/membership/v1/members';
-	
-	module.exports = {
-	  all: {
-	    method: 'get',
-	    path: memberAPI
-	  },
-	
-	  byId: {
-	    method: 'get',
-	    path: memberAPI + '/{memberKey}'
-	  },
-	
-	  create: {
-	    method: 'post',
-	    path: memberAPI
-	  },
-	
-	  update: {
-	    method: 'put',
-	    path: memberAPI + '/{memberKey}'
-	  }
-	};
-
-/***/ },
 /* 12 */
 /***/ function(module, exports) {
 
@@ -343,27 +390,22 @@ module.exports =
 	module.exports = {
 	  all: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/contacts'
+	    path: memberAPI
 	  },
 	
 	  byId: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
+	    path: memberAPI + '/{memberKey}'
 	  },
 	
 	  create: {
 	    method: 'post',
-	    path: memberAPI + '/{memberKey}/contacts'
+	    path: memberAPI
 	  },
 	
 	  update: {
 	    method: 'put',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
-	  },
-	
-	  remove: {
-	    method: 'delete',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
+	    path: memberAPI + '/{memberKey}'
 	  }
 	};
 
@@ -378,27 +420,27 @@ module.exports =
 	module.exports = {
 	  all: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/bankaccounts'
+	    path: memberAPI + '/{memberKey}/contacts'
 	  },
 	
 	  byId: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
 	  },
 	
 	  create: {
 	    method: 'post',
-	    path: memberAPI + '/{memberKey}/bankaccounts'
+	    path: memberAPI + '/{memberKey}/contacts'
 	  },
 	
 	  update: {
 	    method: 'put',
-	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
 	  },
 	
 	  remove: {
 	    method: 'delete',
-	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}'
 	  }
 	};
 
@@ -413,26 +455,27 @@ module.exports =
 	module.exports = {
 	  all: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails'
+	    path: memberAPI + '/{memberKey}/bankaccounts'
 	  },
+	
 	  byId: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
+	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
 	  },
 	
 	  create: {
 	    method: 'post',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails'
+	    path: memberAPI + '/{memberKey}/bankaccounts'
 	  },
 	
 	  update: {
 	    method: 'put',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
+	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
 	  },
 	
 	  remove: {
 	    method: 'delete',
-	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
+	    path: memberAPI + '/{memberKey}/bankaccounts/{bankAccountKey}'
 	  }
 	};
 
@@ -447,27 +490,26 @@ module.exports =
 	module.exports = {
 	  all: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/addresses'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails'
 	  },
-	
 	  byId: {
 	    method: 'get',
-	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
 	  },
 	
 	  create: {
 	    method: 'post',
-	    path: memberAPI + '/{memberKey}/addresses'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails'
 	  },
 	
 	  update: {
 	    method: 'put',
-	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
 	  },
 	
 	  remove: {
 	    method: 'delete',
-	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	    path: memberAPI + '/{memberKey}/contacts/{contactKey}/emails/{emailKey}'
 	  }
 	};
 
@@ -482,6 +524,41 @@ module.exports =
 	module.exports = {
 	  all: {
 	    method: 'get',
+	    path: memberAPI + '/{memberKey}/addresses'
+	  },
+	
+	  byId: {
+	    method: 'get',
+	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	  },
+	
+	  create: {
+	    method: 'post',
+	    path: memberAPI + '/{memberKey}/addresses'
+	  },
+	
+	  update: {
+	    method: 'put',
+	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	  },
+	
+	  remove: {
+	    method: 'delete',
+	    path: memberAPI + '/{memberKey}/addresses/{addressKey}'
+	  }
+	};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var memberAPI = '/membership/v1/members';
+	
+	module.exports = {
+	  all: {
+	    method: 'get',
 	    path: memberAPI + '/{memberKey}/partners'
 	  },
 	
@@ -507,7 +584,7 @@ module.exports =
 	};
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -542,7 +619,7 @@ module.exports =
 	};
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -582,7 +659,7 @@ module.exports =
 	};
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -602,60 +679,60 @@ module.exports =
 	};
 
 /***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var riskAPI = '/risk/v1/members';
-	
-	module.exports = {
-	  all: {
-	    method: 'get',
-	    path: riskAPI + '/{memberKey}/analyses'
-	  },
-	
-	  byId: {
-	    method: 'get',
-	    path: riskAPI + '/{memberKey}/analyses/{analysisKey}'
-	  },
-	
-	  create: {
-	    method: 'post',
-	    path: riskAPI + '/{memberKey}/analyses'
-	  }
-	};
-
-/***/ },
 /* 21 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
-	var riskAPI = '/risk/v1/members';
+	var riskAPI = '/risk/v2/members/analyses';
 	
 	module.exports = {
+	  all: {
+	    method: 'get',
+	    path: '' + riskAPI
+	  },
+	
 	  byId: {
 	    method: 'get',
-	    path: riskAPI + '/{memberKey}/analyses/{analysisKey}'
+	    path: riskAPI + '/{analysisKey}'
 	  },
 	
 	  create: {
 	    method: 'post',
-	    path: riskAPI + '/{memberKey}/analyses'
+	    path: '' + riskAPI
 	  }
 	};
 
 /***/ },
 /* 22 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var riskAPI = '/risk/v2/members/analyses';
+	
+	module.exports = {
+	  byId: {
+	    method: 'get',
+	    path: riskAPI + '/{analysisKey}'
+	  },
+	
+	  create: {
+	    method: 'post',
+	    path: '' + riskAPI
+	  }
+	};
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var pagarmeRecipientAdapter = __webpack_require__(23);
-	var pagarmeBankAccountAdapter = __webpack_require__(24);
-	var pagarmeAddressAdapter = __webpack_require__(25);
-	var pagarmeRiskAnalysisAdapter = __webpack_require__(26);
+	var pagarmeRecipientAdapter = __webpack_require__(24);
+	var pagarmeBankAccountAdapter = __webpack_require__(25);
+	var pagarmeAddressAdapter = __webpack_require__(26);
+	var pagarmeRiskAnalysisAdapter = __webpack_require__(27);
 	
 	module.exports = {
 	  pagarme: {
@@ -667,14 +744,14 @@ module.exports =
 	};
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var moment = __webpack_require__(8);
-	var bankAccountAdapter = __webpack_require__(24);
-	var addressAdapter = __webpack_require__(25);
+	var moment = __webpack_require__(5);
+	var bankAccountAdapter = __webpack_require__(25);
+	var addressAdapter = __webpack_require__(26);
 	
 	var _require = __webpack_require__(9),
 	    always = _require.always,
@@ -786,7 +863,7 @@ module.exports =
 	module.exports = pipe(rejectNullOrEmpty, recipient, filterNotEmpty, filterNotNil, parseRecipient);
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -814,7 +891,7 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -860,12 +937,12 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var recipientAdapter = __webpack_require__(23);
+	var recipientAdapter = __webpack_require__(24);
 	
 	var _require = __webpack_require__(9),
 	    always = _require.always,
@@ -908,7 +985,7 @@ module.exports =
 	module.exports = adapter;
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -917,13 +994,20 @@ module.exports =
 	    pluck = _require.pluck,
 	    isNil = _require.isNil;
 	
-	var Joi = __webpack_require__(28);
+	var Joi = __webpack_require__(29);
 	
 	var configSchema = Joi.object().keys({
 	  secret: Joi.string().required(),
 	  environment: Joi.string().required().valid(['live', 'sandbox']),
 	  clientApplicationKey: Joi.string().required(),
 	  userIdentifier: Joi.string().required()
+	}).required();
+	
+	var connectConfigSchema = Joi.object().keys({
+	  environment: Joi.string().required().valid(['live', 'sandbox', 'test']),
+	  privateKey: Joi.object().required(),
+	  clientId: Joi.string().required(),
+	  userAgent: Joi.string().required()
 	}).required();
 	
 	var validateConfig = function validateConfig(config) {
@@ -934,18 +1018,27 @@ module.exports =
 	  }
 	};
 	
+	var validateConnectConfig = function validateConnectConfig(config) {
+	  var result = Joi.validate(config, connectConfigSchema);
+	
+	  if (!isNil(result.error)) {
+	    throw new Error(pluck('message', result.error.details));
+	  }
+	};
+	
 	module.exports = {
-	  validateConfig: validateConfig
+	  validateConfig: validateConfig,
+	  validateConnectConfig: validateConnectConfig
 	};
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	module.exports = require("joi");
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = require("bluebird");
