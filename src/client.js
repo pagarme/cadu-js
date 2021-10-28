@@ -1,5 +1,4 @@
 const { default: encodeJson } = require('mappersmith/middlewares/encode-json')
-const headerAuth = require('./middlewares/header-auth')
 const headerAuthPandaMiddleware = require('./middlewares/header-auth-panda')
 const buildGetJwtToken = require('./middlewares/utils/build-get-jwt')
 const forge = require('mappersmith').default
@@ -96,19 +95,24 @@ const connectKycProxy = (config = {}) => {
 
   const {
     environment,
-    secret,
-    clientApplicationKey,
-    userIdentifier,
+    privateKey,
+    clientId,
+    userAgent,
   } = config
+
+  const getJwtToken = buildGetJwtToken({
+    environment,
+    privateKey,
+    clientId,
+    userAgent,
+  })
+
+  const AuthorizationTokenHeader = headerAuthPandaMiddleware(getJwtToken)
 
   const library = forge({
     middlewares: [
+      AuthorizationTokenHeader,
       encodeJson,
-      headerAuth({
-        secret,
-        clientApplicationKey,
-        userIdentifier,
-      }),
     ],
     host: chooseHostKycProxy(environment),
     resources: {
