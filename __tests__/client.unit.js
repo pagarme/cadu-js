@@ -1,4 +1,7 @@
 const cadujs = require('../src/client')
+const fs = require('fs')
+
+const certPriv = fs.readFileSync(`${__dirname}/middlewares/utils/mytestkey.pem`)
 
 describe('Create client', () => {
   test("should have property 'adapters'", () => {
@@ -19,38 +22,38 @@ describe('Create client', () => {
       .toThrow()
   })
 
-  test("when try connect without 'clientApplicationKey'", () => {
+  test("when try connect without 'privateKey'", () => {
     expect(() => cadujs.connect({
       environment: 'sandbox',
-      userIdentifier: 'teste@pagar.me',
-      secret: '1234',
+      clientId: 'client_id',
+      userAgent: 'user_agent',
+    }))
+      .toThrow()
+  })
+
+  test("when try connect without 'clientId'", () => {
+    expect(() => cadujs.connect({
+      environment: 'sandbox',
+      privateKey: certPriv,
+      userAgent: 'user_agent',
+    }))
+      .toThrow()
+  })
+
+  test("when try connect without 'userAgent'", () => {
+    expect(() => cadujs.connect({
+      environment: 'sandbox',
+      privateKey: certPriv,
+      clientId: 'client_id',
     }))
       .toThrow()
   })
 
   test("when try connect without 'environment'", () => {
     expect(() => cadujs.connect({
-      clientApplicationKey: '1234-1234-1234',
-      userIdentifier: 'teste@pagar.me',
-      secret: '1234',
-    }))
-      .toThrow()
-  })
-
-  test("when try connect without 'secret'", () => {
-    expect(() => cadujs.connect({
-      environment: 'sandbox',
-      clientApplicationKey: '1234-1234-1234',
-      userIdentifier: 'teste@pagar.me',
-    }))
-      .toThrow()
-  })
-
-  test("when try connect without 'userIdentifier'", () => {
-    expect(() => cadujs.connect({
-      environment: 'sandbox',
-      clientApplicationKey: '1234-1234-1234',
-      secret: '1234',
+      privateKey: certPriv,
+      clientId: 'client_id',
+      userAgent: 'user_agent',
     }))
       .toThrow()
   })
@@ -58,9 +61,9 @@ describe('Create client', () => {
   test('when try connect with correct values', () => {
     const client = cadujs.connect({
       environment: 'sandbox',
-      clientApplicationKey: '1234-1234-1234',
-      secret: '1234',
-      userIdentifier: 'test@pagar.me',
+      privateKey: certPriv,
+      clientId: 'client_id',
+      userAgent: 'user_agent',
     })
 
     expect(client).toBeInstanceOf(Object)

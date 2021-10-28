@@ -8,6 +8,13 @@ const configSchema = Joi.object().keys({
   userIdentifier: Joi.string().required(),
 }).required()
 
+const connectConfigSchema = Joi.object().keys({
+  environment: Joi.string().required().valid(['live', 'sandbox', 'test']),
+  privateKey: Joi.object().required(),
+  clientId: Joi.string().required(),
+  userAgent: Joi.string().required(),
+}).required()
+
 const validateConfig = (config) => {
   const result = Joi.validate(config, configSchema)
 
@@ -16,6 +23,15 @@ const validateConfig = (config) => {
   }
 }
 
+const validateConnectConfig = (config) => {
+  const result = Joi.validate(config, connectConfigSchema)
+
+  if (!isNil(result.error)) {
+    throw new Error(pluck('message', result.error.details))
+  }
+}
+
 module.exports = {
   validateConfig,
+  validateConnectConfig,
 }
