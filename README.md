@@ -65,10 +65,10 @@ the error with the `Promise` interface:
 import cadujs from 'cadu'
 
 cadujs.connect({
-  secret: '1234',
-  clientApplicationKey: '1234-1234-1234',
   environment: 'sandbox',
-  userIdentifier: 'pagarme@pagar.me',
+  privateKey: certPriv,
+  clientId: 'client_id',
+  userAgent: 'user_agent',
 })
   .then(client => client.Members.all())
   .then(console.log)

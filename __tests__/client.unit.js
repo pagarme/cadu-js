@@ -72,9 +72,9 @@ describe('Create client', () => {
   test('when try connectKycProxy with correct values', () => {
     const client = cadujs.connectKycProxy({
       environment: 'sandbox',
-      clientApplicationKey: '1234-1234-1234',
-      secret: '1234',
-      userIdentifier: 'test@pagar.me',
+      privateKey: certPriv,
+      clientId: 'client_id',
+      userAgent: 'user_agent',
     })
 
     expect(client).toBeInstanceOf(Object)
