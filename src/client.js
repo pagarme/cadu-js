@@ -27,10 +27,7 @@ const {
 
 const adapters = require('./adapters')
 
-const {
-  validateConfig,
-  validateConnectConfig,
-} = require('./validations/client')
+const { validateConfig } = require('./validations/client')
 
 configs.Promise = require('bluebird')
 
@@ -49,7 +46,7 @@ const chooseHostKycProxy = ifElse(
 )
 
 const connect = (config = {}) => {
-  validateConnectConfig(config)
+  validateConfig(config)
 
   const {
     environment,
