@@ -1842,8 +1842,9 @@ inherits@2.0.1:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.1.tgz#b17d08d326b4423e568eff719f91b0b1cbdf69f1"
 
 ini@~1.3.0:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
+  integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 inquirer@^3.0.6:
   version "3.3.0"
@@ -2596,10 +2597,10 @@ makeerror@1.0.x:
   dependencies:
     tmpl "1.0.x"
 
-mappersmith@^2.34.0:
-  version "2.34.0"
-  resolved "https://registry.yarnpkg.com/mappersmith/-/mappersmith-2.34.0.tgz#837bb8675acc0561e138ca9d9348be013da5abbf"
-  integrity sha512-OS6fHyP2iOcyAV9fcXZ/OCevqT+JLzLUbFp6WaypmlRihEIL4f9PVqg8/M7e3doGzbE7ot2R4Ca2bYys7ZX44g==
+mappersmith@2.42.0:
+  version "2.42.0"
+  resolved "https://registry.yarnpkg.com/mappersmith/-/mappersmith-2.42.0.tgz#5ea53307b4689f75ecf1aec94e0f1575ea055a66"
+  integrity sha512-1QCZ1FKu+3GqgPkCotTkhnDEyFCU+ZPJnIx7X20L9d2JL6OfBDL9VVc5kyGGlroxZZ6IwYZrmSke+14HpSVC1g==
 
 mem@^1.1.0:
   version "1.1.0"
